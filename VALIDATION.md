@@ -14,3 +14,16 @@ overlay, and both overlays combined. Overlay validation checks the merged model;
 it does not request certificates or provision a password file. The optional
 file-based Traefik configuration is an instructional equivalent of the base CLI
 settings, not a change applied to the classroom server.
+
+## Companion integration
+
+The application adapter is validated by rendering the actual companion Compose
+file at a pinned revision in a separate CI job. Checks enforce its external
+network, Host rule, port 8000 backend, retained updater policy, and loopback-only
+administrative/development ports. No copy of the app source is maintained here.
+
+The public-release checker has tests for stale commits and invalid HTTPS origins.
+It checks the existing application's health contract without duplicating its
+unit/API/browser tests. A rendered-model check is not an actual WUD update or
+rollback rehearsal. No calculator container was deployed to the live classroom
+server by this documentation/configuration update.

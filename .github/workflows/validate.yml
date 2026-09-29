@@ -20,3 +20,20 @@ jobs:
       - run: docker compose -f examples/full-stack/compose.yaml -f examples/full-stack/compose.file-config.yaml config --quiet
       - run: docker compose -f examples/full-stack/compose.yaml -f examples/full-stack/compose.auth.yaml config --quiet
       - run: docker compose -f examples/full-stack/compose.yaml -f examples/full-stack/compose.file-config.yaml -f examples/full-stack/compose.auth.yaml config --quiet
+  integration-contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      # Pin the companion revision used to validate this adapter. Update deliberately.
+      - uses: actions/checkout@v4
+        with:
+          repository: kaw393939/is373_ci_cd
+          ref: f4fc2ca336066f5273b877bf9a2f2cc20ba99778
+          path: .ci/companion
+          persist-credentials: false
+      - name: Render the actual app with the hosting-owned adapter
+        env:
+          APP_HOST: calculator.example.org
+          TRAEFIK_NETWORK: hosting-web
+        run: docker compose -f .ci/companion/compose.yaml -f examples/integrations/calculator/compose.traefik.yaml config --format json > /tmp/hosting-integration.json
+      - run: python3 scripts/check-integration.py /tmp/hosting-integration.json

@@ -2,6 +2,8 @@
 
 Build a public Ubuntu web server with Docker, Traefik, Apache HTTP Server, and automatic Let's Encrypt HTTPS. This mini textbook takes you from DNS records to a working multi-domain server, then teaches you how to operate and troubleshoot it.
 
+This repository owns **hosting infrastructure**. The complementary [is373_ci_cd](https://github.com/kaw393939/is373_ci_cd) repository owns **application code, tests, and image releases**. Each works independently. [Chapter 10](book/10-application-delivery.md) connects them using one small routing adapter and a public release check.
+
 **Audience:** students comfortable opening a terminal but new to running public web infrastructure. **Lab target:** a fresh Ubuntu 24.04 LTS VPS, a public IPv4 address, and domains you control. Budget about 90 minutes, plus DNS propagation. A VPS and domain registration may cost money.
 
 ## What you build
@@ -31,6 +33,7 @@ Every website hostname gets its own official `httpd` container and editable welc
 | [7. Operate and extend](book/07-operations.md) | Add sites, back up data, and update deliberately |
 | [8. Assessment and glossary](book/08-assessment.md) | Demonstrate understanding with practical exercises |
 | [9. Configuration file walkthrough](book/09-configuration-files.md) | Read complete Compose, Traefik, HTML, and host configuration copies |
+| [10. Application delivery](book/10-application-delivery.md) | Route the companion's tested releases through HTTPS and verify updates/rollback |
 
 **Want to see the actual files first?** Browse the [complete example stack](examples/full-stack/README.md), including the [Compose file](examples/full-stack/compose.yaml), [commented Traefik configuration](examples/full-stack/traefik.yml), optional overlays, and all five welcome pages. [Host configuration copies](examples/host-config/README.md) cover APT, firewall commands, and DNS records.
 
@@ -92,3 +95,11 @@ This is a single-server teaching deployment, not high availability. It does not 
 - [Apache HTTP Server documentation](https://httpd.apache.org/docs/2.4/)
 
 Configuration reviewed September 29, 2026. The Traefik version is pinned; the Apache `2.4-alpine` tag follows Apache 2.4 updates. Review upstream release notes before upgrading.
+
+## Repository boundary
+
+Keep the server, proxy, certificates, and public routing lessons here. Keep the
+calculator, Dockerfile, application tests, registry publishing, and application
+updater lifecycle in the companion. Hosting changes do not need an application
+release, and application updates do not rebuild the proxy or welcome pages.
+There is no duplicated application source or second publishing workflow here.

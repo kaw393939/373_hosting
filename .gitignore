@@ -1,5 +1,6 @@
 runtime/
 runtime-manual/
+.ci/
 hosting.json
 .env
 .env.*
