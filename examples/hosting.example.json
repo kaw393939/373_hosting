@@ -1,0 +1,11 @@
+{
+  "email": "admin@example.com",
+  "dashboard": "traefik.example.com",
+  "sites": [
+    "example.com",
+    "www.example.com",
+    "dev.example.com",
+    "example.org",
+    "www.example.org"
+  ]
+}

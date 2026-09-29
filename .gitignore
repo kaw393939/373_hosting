@@ -1,0 +1,14 @@
+runtime/
+hosting.json
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+.DS_Store
+acme*.json
+*.pem
+*.key
+*.htpasswd
+secrets/
+*.tar.gz
