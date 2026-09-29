@@ -16,3 +16,7 @@ jobs:
       - run: python3 -m unittest discover -s tests -v
       - run: python3 scripts/configure.py --config examples/hosting.example.json --output runtime
       - run: docker compose -f runtime/compose.yaml config --quiet
+      - run: docker compose -f examples/full-stack/compose.yaml config --quiet
+      - run: docker compose -f examples/full-stack/compose.yaml -f examples/full-stack/compose.file-config.yaml config --quiet
+      - run: docker compose -f examples/full-stack/compose.yaml -f examples/full-stack/compose.auth.yaml config --quiet
+      - run: docker compose -f examples/full-stack/compose.yaml -f examples/full-stack/compose.file-config.yaml -f examples/full-stack/compose.auth.yaml config --quiet

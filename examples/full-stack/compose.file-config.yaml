@@ -1,0 +1,7 @@
+# Merge with compose.yaml. command replaces the base CLI configuration.
+services:
+  traefik:
+    command:
+      - --configFile=/etc/traefik/traefik.yml
+    volumes:
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro

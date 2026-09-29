@@ -1,0 +1,9 @@
+# Optional overlay. Create credentials/dashboard.htpasswd before starting.
+services:
+  traefik:
+    volumes:
+      - ./credentials/dashboard.htpasswd:/run/secrets/dashboard.htpasswd:ro
+    labels:
+      traefik.http.routers.dashboard.middlewares: dashboard-auth
+      traefik.http.middlewares.dashboard-auth.basicauth.usersfile: /run/secrets/dashboard.htpasswd
+      traefik.http.middlewares.dashboard-auth.basicauth.removeheader: 'true'

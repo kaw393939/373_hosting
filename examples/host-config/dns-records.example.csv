@@ -1,0 +1,8 @@
+zone,type,name,value,ttl_seconds
+example.com,A,@,203.0.113.10,600
+example.com,A,www,203.0.113.10,600
+example.com,A,dev,203.0.113.10,600
+example.com,A,traefik,203.0.113.10,600
+example.org,A,@,203.0.113.10,600
+example.org,A,www,203.0.113.10,600
+example.org,A,*,203.0.113.10,600

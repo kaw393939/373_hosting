@@ -1,0 +1,37 @@
+# Static Traefik configuration, equivalent to the base Compose command list.
+# Activate through compose.file-config.yaml; do not use alongside the CLI options.
+api:
+  dashboard: true
+  insecure: false  # No separately exposed insecure dashboard listener.
+
+providers:
+  docker:
+    exposedByDefault: false  # Only containers with traefik.enable=true get routes.
+    network: hosting-web    # Actual Docker network name, not just Compose's key.
+
+entryPoints:
+  web:
+    address: ':80'
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: ':443'
+    http:
+      tls:
+        certResolver: letsencrypt  # Default for routers using this entry point.
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: admin@example.com  # Replace before the first deployment.
+      storage: /letsencrypt/acme.json  # Container path backed by a host mount.
+      httpChallenge:
+        entryPoint: web  # Public port 80 must remain reachable for renewal.
+
+ping: {}  # Enables the internal endpoint used by the container health check.
+log:
+  level: INFO
+accessLog: {}  # Request logs go to container stdout; Compose rotates them.

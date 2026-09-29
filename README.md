@@ -30,6 +30,9 @@ Every website hostname gets its own official `httpd` container and editable welc
 | [6. Diagnose failures](book/06-troubleshooting.md) | Locate failures by testing one layer at a time |
 | [7. Operate and extend](book/07-operations.md) | Add sites, back up data, and update deliberately |
 | [8. Assessment and glossary](book/08-assessment.md) | Demonstrate understanding with practical exercises |
+| [9. Configuration file walkthrough](book/09-configuration-files.md) | Read complete Compose, Traefik, HTML, and host configuration copies |
+
+**Want to see the actual files first?** Browse the [complete example stack](examples/full-stack/README.md), including the [Compose file](examples/full-stack/compose.yaml), [commented Traefik configuration](examples/full-stack/traefik.yml), optional overlays, and all five welcome pages. [Host configuration copies](examples/host-config/README.md) cover APT, firewall commands, and DNS records.
 
 ## Quick start
 

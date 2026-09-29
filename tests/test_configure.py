@@ -10,6 +10,17 @@ spec.loader.exec_module(configure)
 
 
 class ConfigurationTests(unittest.TestCase):
+    def test_checked_in_stack_matches_generator(self):
+        repo = Path(__file__).parents[1]
+        config = json.loads((repo / 'examples/hosting.example.json').read_text())
+        example = repo / 'examples/full-stack'
+        with tempfile.TemporaryDirectory() as temporary:
+            actual = configure.generate(config, temporary)
+            self.assertEqual(actual, json.loads((example / 'compose.yaml').read_text()))
+            for host in config['sites']:
+                relative = Path('sites') / host / 'index.html'
+                self.assertEqual((Path(temporary) / relative).read_text(), (example / relative).read_text())
+
     def config(self):
         return {'email': 'teacher@example.com', 'dashboard': 'traefik.example.com',
                 'sites': ['example.com', 'www.example.com']}

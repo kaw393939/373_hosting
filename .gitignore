@@ -1,4 +1,5 @@
 runtime/
+runtime-manual/
 hosting.json
 .env
 .env.*
