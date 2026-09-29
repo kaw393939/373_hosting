@@ -4,6 +4,10 @@ Build a public Ubuntu web server with Docker, Traefik, Apache HTTP Server, and a
 
 This repository owns **hosting infrastructure**. The complementary [is373_ci_cd](https://github.com/kaw393939/is373_ci_cd) repository owns **application code, tests, and image releases**. Each works independently. [Chapter 10](book/10-application-delivery.md) connects them using one small routing adapter and a public release check.
 
+Live classroom calculator: [calc.mywebclass.org](https://calc.mywebclass.org).
+See the [dated deployment evidence](book/deployments/2026-09-29-calculator.md) for
+the tested release, HTTPS verification, and observed limits.
+
 **Audience:** students comfortable opening a terminal but new to running public web infrastructure. **Lab target:** a fresh Ubuntu 24.04 LTS VPS, a public IPv4 address, and domains you control. Budget about 90 minutes, plus DNS propagation. A VPS and domain registration may cost money.
 
 ## What you build

@@ -10,6 +10,8 @@ def check(model):
         raise ValueError('Adapter must not add a second proxy or duplicate application services')
     prod = services['prod']
     labels = prod['labels']
+    if 'traefik.http.routers.calculator.tls' in labels:
+        raise ValueError('Inherit the entry-point TLS resolver; explicit tls=true suppresses that default')
     if labels.get('traefik.http.services.calculator.loadbalancer.server.port') != '8000':
         raise ValueError('Calculator must route to internal port 8000')
     if labels.get('traefik.http.routers.calculator.rule') != 'Host(`calculator.example.org`)':

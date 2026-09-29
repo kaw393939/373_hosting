@@ -27,3 +27,8 @@ It checks the existing application's health contract without duplicating its
 unit/API/browser tests. A rendered-model check is not an actual WUD update or
 rollback rehearsal. No calculator container was deployed to the live classroom
 server by this documentation/configuration update.
+
+The subsequent user-authorized public deployment is recorded in
+[the September 29 calculator deployment evidence](book/deployments/2026-09-29-calculator.md).
+It includes the certificate-inheritance correction, trusted HTTPS release
+verification, and seven browser checks against the live endpoint.

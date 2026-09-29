@@ -173,6 +173,8 @@ architecture, running container identity, observed public health, and rollback
 observations. Explain why these are separate evidence items. Never submit
 registry tokens, updater credentials, or ACME keys.
 
-The original hosting pages and local ARM64 demo were verified separately. This
-chapter is a deployment exercise; adding its files does not claim that the
-calculator is already deployed on the classroom VPS.
+The original hosting pages and local ARM64 demo were verified separately. The
+calculator was subsequently deployed at `calc.mywebclass.org`; see the
+[dated public deployment evidence](deployments/2026-09-29-calculator.md). That
+record distinguishes initial deployment checks from future update/rollback
+exercises.
