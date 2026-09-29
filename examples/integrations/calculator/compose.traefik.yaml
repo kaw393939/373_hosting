@@ -11,7 +11,7 @@ services:
       traefik.docker.network: ${TRAEFIK_NETWORK:-hosting-web}
       traefik.http.routers.calculator.rule: Host(`${APP_HOST:?Set APP_HOST in the application .env}`)
       traefik.http.routers.calculator.entrypoints: websecure
-      traefik.http.routers.calculator.tls: 'true'
+      # Inherit entry-point TLS + certificate resolver; tls=true overrides that default.
       traefik.http.routers.calculator.service: calculator
       traefik.http.services.calculator.loadbalancer.server.port: '8000'
 
