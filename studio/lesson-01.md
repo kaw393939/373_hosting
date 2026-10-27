@@ -117,6 +117,9 @@ git pull --ff-only origin main
 python3 studio.py status
 ```
 
+Merging starts checks on `main` too. If status says CI is pending, wait for
+that run and rerun `python3 studio.py status`; do not launch again.
+
 Discuss any remaining checkpoint or unavailable GitHub check with the coach.
 Do not turn a missing result into a completion claim.
 

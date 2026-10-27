@@ -87,6 +87,10 @@ clone another repository on the VPS or require its GitHub SSH key.
 
 ## Check, inspect and keep
 
+Preserve a sanitized successful new-launch report before repeat verification.
+A later `already-managed` report describes that verification operation; it
+does not establish when the deployment was first created.
+
 AI checks and reviews first: use `verify` for actual runtime/public HTTPS/API
 evidence and `check` for the prepared Black, Pylint, pytest and local real-browser
 checks. Full local E2E needs local Docker. Without it, run

@@ -25,6 +25,10 @@ your existing server; keep fresh-server installation for a separate task.
    git remote -v
    ```
 
+   If Git says the clone is empty, wait until GitHub shows its README, then
+   run `git pull --ff-only origin main` inside the clone. Do not create the
+   missing files yourself.
+
 3. Open this cloned folder as a **local project** in ChatGPT desktop/Codex or an
    agent that can read/edit local files and run terminal commands. Browser
    control helps with review. VS Code is optional. Start one chat:
