@@ -130,7 +130,7 @@ tracks the follow-up; host package updates do not patch preserved application im
 
 ## HOST-003 · Companion image security maintenance
 
-**Status:** application patch merged; main-candidate validation and deployment in progress.
+**Status:** application patch, full main CI and development/QA acceptance passed; production awaits owner-reviewer approval.
 **Owning issue:** [chat #44](https://github.com/kaw393939/is373-ai-chat/issues/44).
 **Application PR:** [#46](https://github.com/kaw393939/is373-ai-chat/pull/46).
 **Change record:** [certifi maintenance](book/changes/2026-10-26-certifi.md).

@@ -169,8 +169,16 @@ Host maintenance preserved application images and did not patch their contents.
 
 [The worked record](book/changes/2026-10-26-certifi.md) links the application
 requirement, [PR #46](https://github.com/kaw393939/is373-ai-chat/pull/46) and
-canonical evidence. Full candidate CI and live environment verification were
-pending when this crosslink was drafted; no new deployment success is claimed
-here. Hosting documentation checks validate these links/content, not the
-application image, TLS behavior or production release. Record those results in
-the owning application repository before claiming the running dependency is patched.
+canonical evidence. [Main delivery 40435194256](https://github.com/kaw393939/is373-ai-chat/actions/runs/40435194256),
+attempt 2, passed image/TLS/browser/scan/SBOM/process checks, publication,
+development, QA browser/persistence/HTTPS checks and host acceptance for 2.0.1.
+Its digest is recorded in the owning application repository. Attempt 1 was
+cancelled during slow Playwright OS dependency downloads before E2E pytest;
+the unchanged full rerun passed without a relaxed gate.
+
+Separate public checks found both previews at the accepted commit/version and
+schema 0003; production still matched its 2.0.0 baseline. Eight selected public
+root status/content/TLS baselines matched. [Production run 40437498195](https://github.com/kaw393939/is373-ai-chat/actions/runs/40437498195)
+is waiting for required owner-reviewer approval; no production promotion is
+claimed. Hosting documentation checks validate these links/content, not the
+application image or live server. The 26 hosting tests and diff check passed.
