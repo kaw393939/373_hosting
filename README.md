@@ -85,6 +85,14 @@ claims. Timestamps record activity, not learning.
 **Returning later:** reopen the same clone/chat and ask the coach to read SPEC
 and LEARNING and resume the next checkpoint. You normally do not clone again.
 
+## Next · build your application
+
+After keeping the calculator lesson, start the separate
+[IS373 App Studio](https://github.com/kaw393939/is373-app-studio).
+Its README guides a new template copy and laptop clone: first a branded FastAPI
+homepage, then signup/login and member/admin roles. Keep this repository for
+your server. The app starts locally; deployment is a later agreed step.
+
 ## Hosting textbook — reference when needed
 
 These chapters explain the existing infrastructure. They are not a second
