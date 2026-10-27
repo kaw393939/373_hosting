@@ -1,0 +1,21 @@
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+[tool.pylint.main]
+py-version = "3.12"
+persistent = false
+
+[tool.pylint.format]
+max-line-length = 88
+
+[tool.pylint.reports]
+reports = false
+score = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "studio_tests"]
+addopts = "--strict-markers"
+markers = [
+  "e2e: real Chromium and the supplied calculator image on isolated local Docker",
+]

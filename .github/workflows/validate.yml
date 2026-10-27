@@ -5,6 +5,22 @@ on:
 permissions:
   contents: read
 jobs:
+  studio:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 studio.py setup
+      - run: .venv/bin/python -m playwright install --with-deps chromium
+      - run: python3 studio.py check
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: studio-browser-failures
+          path: test-results/
   validate:
     runs-on: ubuntu-latest
     steps:

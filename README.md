@@ -1,131 +1,117 @@
-# IS 373 Hosting Lab
+# IS373 Server Studio
 
-Build a public Ubuntu web server with Docker, Traefik, Apache HTTP Server, and automatic Let's Encrypt HTTPS. This mini textbook takes you from DNS records to a working multi-domain server, then teaches you how to operate and troubleshoot it.
+**Launch a calculator on the server you already built—with an AI coach—and show
+what proves it works.** Your first lesson uses a published image, your existing
+Docker/Traefik setup and one public HTTPS hostname. You practice agreeing a small
+specification, letting AI build and test, inspecting the result, and keeping
+visible evidence in GitHub.
 
-This repository owns **hosting infrastructure**. The complementary [is373_ci_cd](https://github.com/kaw393939/is373_ci_cd) repository owns **application code, tests, and image releases**. Each works independently. [Chapter 10](book/10-application-delivery.md) connects them using one small routing adapter and a public release check.
+You need your usual server SSH access, Docker and working Traefik/HTTPS. Missing
+prerequisites become explicit gaps to troubleshoot with the coach. Start with
+your existing server; keep fresh-server installation for a separate task.
 
-Live classroom calculator: [calc.mywebclass.org](https://calc.mywebclass.org).
-See the [dated deployment evidence](book/deployments/2026-09-29-calculator.md) for
-the tested release, HTTPS verification, and observed limits.
+## Start here — on your laptop
 
-**Audience:** students comfortable opening a terminal but new to running public web infrastructure. **Lab target:** a fresh Ubuntu 24.04 LTS VPS, a public IPv4 address, and domains you control. Budget about 90 minutes, plus DNS propagation. A VPS and domain registration may cost money.
+1. Choose **Use this template → Create a new repository** on
+   [373_hosting](https://github.com/kaw393939/373_hosting). Make your own public
+   copy named `my-server-studio`. Wait until it displays its README and files.
+2. Use your usual class terminal and GitHub SSH setup. Replace `YOUR-USERNAME`,
+   then run one command at a time:
 
-## What you build
+   ```sh
+   git clone git@github.com:YOUR-USERNAME/my-server-studio.git
+   cd my-server-studio
+   pwd
+   git remote -v
+   ```
 
-```mermaid
-flowchart LR
-    Browser --> DNS[DNS: hostname to server IP]
-    Browser -->|HTTP 80 / HTTPS 443| Traefik
-    Traefik -->|Host rule| ApacheA[Apache: first domain]
-    Traefik -->|Host rule| ApacheB[Apache: second domain]
-    Admin[Administrator browser] -->|SSH tunnel| Dashboard[Private dashboard and API]
-    Traefik <-->|ACME validation and renewal| LE[Let's Encrypt]
-```
+3. Open this cloned folder as a **local project** in ChatGPT desktop/Codex or an
+   agent that can read/edit local files and run terminal commands. Browser
+   control helps with review. VS Code is optional. Start one chat:
 
-Every website hostname gets its own official `httpd` container and editable welcome page. Traefik is the only container publishing host ports. It routes requests, redirects HTTP to HTTPS, and manages certificates. Docker restarts the services after reboot.
+   > Read README.md, AGENTS.md, SPEC.md and LEARNING.md. Guide me through studio/lesson-01.md one small step at a time. Confirm my folder and SSH remote first, help me run setup, then ask for my usual server SSH command. Wait for my predictions and observations; do not invent my answers or change my server before we review the plan.
 
-## Read the mini textbook
+4. Let the connected agent check Python 3.12+ and run `python3 studio.py setup`
+   in this laptop clone. It prepares the Python tools and Chromium and helps
+   with actual setup errors. Give the coach one requested nonsecret value at a
+   time; you do not need to collect every server detail first.
 
-| Chapter | Learning outcome |
+**First checkpoint:** the agent can read your clone, setup works, and your next
+step is clear. Keep the same project and chat. The coach will help inspect your
+existing server before proposing a change. Keep passwords, tokens, keys and raw
+server dumps private.
+
+## One lesson, one visible result
+
+Follow [Lesson 01](studio/lesson-01.md) as the coach reveals each step:
+
+**Try → Decide → Build → Check → Keep**
+
+Try the [classroom calculator](https://calc.mywebclass.org), agree a small scope,
+launch the image, let AI check it, then try YOUR public calculator and explain
+one actual result. The current calculator UI says “IS373 Content Management
+System” and mentions automatic deployment; this first lesson launches a fixed
+image. Your own application and automatic code delivery come later.
+
+The CLI runs from this laptop clone and sends a scoped bundle over SSH/SCP.
+Your server does not need a GitHub key or an application source clone. A matching
+existing deployment can be adopted only after explicit review; that is recorded
+as verification of existing work, rather than a new launch.
+
+The prepared `check` combines Black, Pylint, pytest and real-browser checks.
+Full local E2E needs local Docker; without it, the coach uses `check --fast`
+locally and the PR's full CI for E2E, keeping unrun checks explicit. No Node
+setup is needed for this lesson. `status` names
+the next checkpoint; it cannot certify understanding or close a GitHub issue.
+
+| File | What it holds |
 |---|---|
-| [1. The request's journey](book/01-architecture.md) | Distinguish DNS, ports, TLS, routers, and services |
-| [2. Prepare the server and DNS](book/02-server-and-dns.md) | Connect over SSH and point names at your VPS |
-| [3. Install Docker](book/03-docker.md) | Understand images, containers, networks, and mounts |
-| [4. Build the hosting stack](book/04-deploy.md) | Generate and deploy custom Apache welcome pages |
-| [5. HTTPS and the dashboard](book/05-https-dashboard.md) | Explain certificate issuance and inspect routing |
-| [6. Diagnose failures](book/06-troubleshooting.md) | Locate failures by testing one layer at a time |
-| [7. Operate and extend](book/07-operations.md) | Add sites, back up data, and update deliberately |
-| [8. Assessment and glossary](book/08-assessment.md) | Demonstrate understanding with practical exercises |
-| [9. Configuration file walkthrough](book/09-configuration-files.md) | Read complete Compose, Traefik, HTML, and host configuration copies |
-| [10. Application delivery](book/10-application-delivery.md) | Route the companion's tested releases through HTTPS and verify updates/rollback |
+| [SPEC.md](SPEC.md) | Agreed scope and links to actual implementation/evidence |
+| [AGENTS.md](AGENTS.md) | Short, paced coaching behavior |
+| [LEARNING.md](LEARNING.md) | Your explanations, observations and help received |
+| [Lesson 01](studio/lesson-01.md) | Current actions and success checkpoints |
 
-**Want to see the actual files first?** Browse the [complete example stack](examples/full-stack/README.md), including the [Compose file](examples/full-stack/compose.yaml), [commented Traefik configuration](examples/full-stack/traefik.yml), optional overlays, and all five welcome pages. [Host configuration copies](examples/host-config/README.md) cover APT, firewall commands, and DNS records.
+The agent drafts a short LEARNING.md summary, not a transcript or grade. It may
+be public: review, correct or remove excerpts before commit/push. Your issue and
+PR belong to YOUR repository; template copies do not inherit instructor issues.
+`python3 studio.py issue --open` opens the prepared form; plain `issue` prints its URL.
+Checks, live behavior, learner contributions and GitHub completion are separate
+claims. Timestamps record activity, not learning.
 
-## Quick start
+**Returning later:** reopen the same clone/chat and ask the coach to read SPEC
+and LEARNING and resume the next checkpoint. You normally do not clone again.
 
-Run these commands **on a fresh Ubuntu VPS**, after setting your DNS records. Do not start a second stack on a server already using ports 80 and 443.
+## Hosting textbook — reference when needed
 
-```bash
-sudo apt-get update
-sudo apt-get install -y git python3
-git clone git@github.com:kaw393939/373_hosting.git
-cd 373_hosting
-sudo bash scripts/install-docker.sh
-cp examples/hosting.example.json hosting.json
-nano hosting.json
-```
+These chapters explain the existing infrastructure. They are not a second
+onboarding path. Do not run fresh-server installation over a working host.
 
-Use your class GitHub SSH setup for the clone. Replace the website hostnames and
-email address with your own. The `dashboard` field remains for compatibility and
-must differ from the websites; it creates no public route and needs no new DNS
-record or certificate.
+| Chapter | Topic |
+|---|---|
+| [1](book/01-architecture.md) | Request path, DNS, ports, TLS and routing |
+| [2](book/02-server-and-dns.md) | Server and DNS preparation |
+| [3](book/03-docker.md) | Docker installation and concepts |
+| [4](book/04-deploy.md) | Hosting-stack generation and deployment |
+| [5](book/05-https-dashboard.md) | HTTPS and the private dashboard |
+| [6](book/06-troubleshooting.md) | Diagnosing one layer at a time |
+| [7](book/07-operations.md) | Deliberate operations and recovery |
+| [8](book/08-assessment.md) | Original hosting exercises and glossary |
+| [9](book/09-configuration-files.md) | Configuration-file walkthrough |
+| [10](book/10-application-delivery.md) | Older full application-delivery integration |
 
-```bash
-python3 scripts/configure.py --config hosting.json --output runtime
-sudo docker compose -f runtime/compose.yaml config --quiet
-sudo docker compose -f runtime/compose.yaml up -d
-python3 scripts/verify.py --config hosting.json
-```
+[Complete hosting examples](examples/full-stack/README.md) and
+[host configuration references](examples/host-config/README.md) remain available.
+The older Chapter 10 application-checkout/Make/WUD route is reference material;
+Lesson 01 uses the server CLI and published image instead.
 
-Certificate issuance may take a few minutes; rerun verification after startup. From a terminal on your own computer, open the private dashboard tunnel and leave it running:
+This repository owns hosting and its studio CLI. The separate
+[calculator source](https://github.com/kaw393939/is373_ci_cd) owns application
+code, tests and image publication; you can inspect it without making another
+student clone. No application source or publishing workflow is copied here.
 
-```bash
-ssh -N -o ExitOnForwardFailure=yes -L 127.0.0.1:18082:127.0.0.1:8082 USER@SERVER
-```
-
-Open `http://127.0.0.1:18082/dashboard/` (keep the final slash). SSH authenticates the connection and encrypts the tunnel; the dashboard is bound to the server's loopback address. Stop the tunnel with Ctrl+C. [Chapter 5](book/05-https-dashboard.md) explains the boundary and optional extra authentication. The dashboard is an inspection interface; edit Compose to change the stack.
-
-The [HOST-001 specification](SPEC.md) and [dated worked change](book/changes/2026-10-26-dashboard.md) track the change from the historical public dashboard. Repository changes alone do not update an existing VPS.
-
-## Project map
-
-```text
-book/                         Mini textbook, labs, and troubleshooting
-examples/hosting.example.json  Replaceable example settings
-scripts/install-docker.sh     Official Docker APT repository installation
-scripts/configure.py          Generate Compose and welcome pages
-scripts/verify.py             Check DNS, redirects, HTTPS, and page content
-tests/                        Offline generator checks
-runtime/                      Generated deployment; ignored by Git
-```
-
-The example uses the same two-domain website layout as the class demonstration:
-apex names, `www`, and a development host. It contains no real server address,
-credentials, or certificate keys. Local configuration and generated runtime are
-ignored by Git.
-
-## Validation and limits
-
-Run `python3 -m unittest discover -s tests -v` and `bash -n scripts/install-docker.sh`. CI also validates the generated Compose model. These checks do not provision a cloud server or request public certificates. See [VALIDATION.md](VALIDATION.md) for exactly what was exercised.
-
-The [HOST-002 maintenance record](book/changes/2026-10-26-maintenance.md) tracks
-separately authorized recovery checks, package updates, and a reboot, with each
-result recorded separately. Recovery, package installation, reboot, host/HTTP
-checks and AI browser review passed. It adds no required student step.
-
-The [HOST-003 application dependency follow-up](book/changes/2026-10-26-certifi.md)
-shows why a host update does not patch an existing application image, and how
-image checks connect to reviewed deployment evidence. Its current results live
-in the application's linked issue and change record.
-
-This is a single-server teaching deployment, not high availability. It does not configure GoDaddy automatically, deploy a wildcard certificate, or provide application databases. The scripts do not upgrade Ubuntu or reboot the VPS.
-
-## Primary references
-
-- [Docker installation on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
-- [Docker Compose documentation](https://docs.docker.com/compose/)
-- [Traefik Docker provider](https://doc.traefik.io/traefik/reference/install-configuration/providers/docker/)
-- [Traefik certificate resolvers](https://doc.traefik.io/traefik/reference/install-configuration/tls/certificate-resolvers/acme/)
-- [Traefik dashboard](https://doc.traefik.io/traefik/reference/install-configuration/api-dashboard/)
-- [Let's Encrypt challenge types](https://letsencrypt.org/docs/challenge-types/)
-- [Apache HTTP Server documentation](https://httpd.apache.org/docs/2.4/)
-
-Configuration reviewed October 26, 2026. The Traefik version is pinned; the Apache `2.4-alpine` tag follows Apache 2.4 updates. Review upstream release notes before upgrading.
-
-## Repository boundary
-
-Keep the server, proxy, certificates, and public routing lessons here. Keep the
-calculator, Dockerfile, application tests, registry publishing, and application
-updater lifecycle in the companion. Hosting changes do not need an application
-release, and application updates do not rebuild the proxy or welcome pages.
-There is no duplicated application source or second publishing workflow here.
+[VALIDATION.md](VALIDATION.md) states what repository and instructor checks
+actually established. Optional worked records cover
+[private dashboard access](book/changes/2026-10-26-dashboard.md),
+[backup/restore and host maintenance](book/changes/2026-10-26-maintenance.md), and
+[application dependency maintenance](book/changes/2026-10-26-certifi.md).
+Those historical operations add no required task or permission to repeat them.
