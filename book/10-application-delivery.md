@@ -2,6 +2,10 @@
 
 [Contents](../README.md) · [Routing adapter](../examples/integrations/calculator/README.md)
 
+**Starting Systems Studio?** Follow [Lesson 01](../studio/lesson-01.md).
+It launches a pinned calculator image without a separate application checkout
+or updater. This chapter remains the extended companion lifecycle reference.
+
 ## Learning goals
 
 Connect independent infrastructure and application lifecycles. Trace an exact
@@ -70,7 +74,7 @@ home directory on the server. Adjust paths if you used another location.
 
 ```bash
 cd ~
-git clone https://github.com/kaw393939/is373_ci_cd.git
+git clone git@github.com:kaw393939/is373_ci_cd.git
 cp ~/373_hosting/examples/integrations/calculator/compose.traefik.yaml ~/is373_ci_cd/compose.override.yaml
 cd ~/is373_ci_cd
 cp ~/373_hosting/examples/integrations/calculator/.env.example .env

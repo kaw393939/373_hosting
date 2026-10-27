@@ -1,5 +1,41 @@
 # Hosting requirements
 
+## STUDIO-001 · Launch a tested calculator on an existing server
+
+**Status:** student starter; completion requires the learner's own deployment and evidence.
+**Lesson:** [Launch the calculator](studio/lesson-01.md).
+**Instructor implementation issue:** [#9](https://github.com/kaw393939/373_hosting/issues/9).
+Students create their own issue using the [lesson template](.github/ISSUE_TEMPLATE/studio-calculator.md).
+
+The server repository shall launch only the supplied, reviewed calculator image
+on a selected existing Traefik network and a nonconflicting hostname. It shall
+not copy the calculator source, build an untested substitute, start another
+proxy/updater, change host authentication, or modify unrelated services.
+The [release selection](studio/calculator-release.json) supplies the expected
+commit and multi-platform image digest independently of the running website.
+This is a bounded launch lesson, not certification of the whole server baseline
+or a current vulnerability-free image.
+
+The learner follows Try → Decide → Build → Check → Keep. Coaching pauses for
+an actual request-path prediction, interpretation of one real check, a browser
+observation and a keep/revise decision. Assistance and AI/operator observations
+remain distinct from learner contributions. [LEARNING.md](LEARNING.md) is a
+brief reviewed record; unavailable context remains missing.
+
+Completion evidence links the student's issue, agreed scope, actual hosted
+image/commit and trusted HTTPS observations, valid and rejected API cases,
+preserved unrelated containers, reviewed learner record, and checked/merged PR.
+A local preview, fixture, closed issue, timestamp or AI assertion alone cannot
+establish that completion. The status command reports recorded evidence and
+readiness for instructor review; it does not assign a grade or certify authorship
+or understanding. Private targets/configuration stay ignored; only selected,
+reviewed runtime evidence is exported for publication.
+
+New studio Python code uses prepared Black/Pylint checks; pytest retains the
+existing host tests and adds completion/safety cases plus real-image Chromium
+E2E checks. CI runs the full checks without deploying infrastructure. Public
+deployment verification is a separate dated operation.
+
 ## HOST-001 · Keep the Traefik dashboard private
 
 **Status:** applied and verified October 26, 2026 (EDT; checks completed October 27 at 00:04 UTC).

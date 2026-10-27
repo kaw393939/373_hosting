@@ -1,0 +1,8 @@
+{
+  "image": "docker.io/kaw393939/is373_ci_cd@sha256:aec414c990a5de6ed74c9e8dcb105b78f6358c03a8cea70a9d40dcda51c3a8fa",
+  "commit": "4600202bad42da0c5ffb11d83ce8364671293d3d",
+  "source_url": "https://github.com/kaw393939/is373_ci_cd/tree/4600202bad42da0c5ffb11d83ce8364671293d3d",
+  "publication_url": "https://github.com/kaw393939/is373_ci_cd/actions/runs/36904255716",
+  "platforms": ["linux/amd64", "linux/arm64"],
+  "scope": "Supplied calculator release for STUDIO-001; no claim of a current vulnerability-free image. Updating this selection requires review and repeated image checks."
+}
