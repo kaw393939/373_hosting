@@ -159,7 +159,26 @@ preceded healthy backends. These are approximate endpoint observations, not
 full-traffic downtime or an availability guarantee. No healthcheck or gate
 was weakened to obtain a pass.
 
-The chat documentation PR's book check passed but its application vulnerability
-gate failed for an existing locked certifi dependency. It remains unmerged;
-[chat #44](https://github.com/kaw393939/is373-ai-chat/issues/44) tracks remediation.
-Host maintenance preserved application images and does not patch their contents.
+At maintenance completion, the chat documentation PR's book check had passed
+but its application vulnerability gate had failed for an existing locked certifi
+dependency; that PR was unmerged. [HOST-003](#host-003-companion-image-security-maintenance)
+tracks the follow-up to [chat #44](https://github.com/kaw393939/is373-ai-chat/issues/44).
+Host maintenance preserved application images and did not patch their contents.
+
+## HOST-003: companion image security maintenance
+
+[The worked record](book/changes/2026-10-26-certifi.md) links the application
+requirement, [PR #46](https://github.com/kaw393939/is373-ai-chat/pull/46) and
+canonical evidence. [Main delivery 40435194256](https://github.com/kaw393939/is373-ai-chat/actions/runs/40435194256),
+attempt 2, passed image/TLS/browser/scan/SBOM/process checks, publication,
+development, QA browser/persistence/HTTPS checks and host acceptance for 2.0.1.
+Its digest is recorded in the owning application repository. Attempt 1 was
+cancelled during slow Playwright OS dependency downloads before E2E pytest;
+the unchanged full rerun passed without a relaxed gate.
+
+Separate public checks found both previews at the accepted commit/version and
+schema 0003; production still matched its 2.0.0 baseline. Eight selected public
+root status/content/TLS baselines matched. [Production run 40437498195](https://github.com/kaw393939/is373-ai-chat/actions/runs/40437498195)
+is waiting for required owner-reviewer approval; no production promotion is
+claimed. Hosting documentation checks validate these links/content, not the
+application image or live server. The 26 hosting tests and diff check passed.
