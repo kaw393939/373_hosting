@@ -130,7 +130,7 @@ tracks the follow-up; host package updates do not patch preserved application im
 
 ## HOST-003 · Companion image security maintenance
 
-**Status:** application patch, full main CI and development/QA acceptance passed; production awaits owner-reviewer approval.
+**Status:** 2.0.1 deployed through the authorized production workflow; independent public HTTP and browser checks passed October 27, 2026 UTC.
 **Owning issue:** [chat #44](https://github.com/kaw393939/is373-ai-chat/issues/44).
 **Application PR:** [#46](https://github.com/kaw393939/is373-ai-chat/pull/46).
 **Change record:** [certifi maintenance](book/changes/2026-10-26-certifi.md).
@@ -145,7 +145,10 @@ certificates and services during the application release.
 Distinguish the dependency scan, synthetic TLS checks, and the selected running
 digest in development, QA and production. Retain the existing promotion gate
 and record approval accurately; passing source checks alone does not establish
-a patched deployment. Broader Python/build-tool trust scope stays in
+a patched deployment. The [v2.0.1 release](https://github.com/kaw393939/is373-ai-chat/releases/tag/v2.0.1)
+preserves candidate, QA and production evidence for the same digest. The agent
+executed the owner's explicit approval through the unchanged reviewer gate;
+this was not independent two-person review. Broader Python/build-tool trust scope stays in
 [chat #45](https://github.com/kaw393939/is373-ai-chat/issues/45).
 This cross-repository worked example adds no required student task or copied
 application implementation here.
