@@ -159,7 +159,18 @@ preceded healthy backends. These are approximate endpoint observations, not
 full-traffic downtime or an availability guarantee. No healthcheck or gate
 was weakened to obtain a pass.
 
-The chat documentation PR's book check passed but its application vulnerability
-gate failed for an existing locked certifi dependency. It remains unmerged;
-[chat #44](https://github.com/kaw393939/is373-ai-chat/issues/44) tracks remediation.
-Host maintenance preserved application images and does not patch their contents.
+At maintenance completion, the chat documentation PR's book check had passed
+but its application vulnerability gate had failed for an existing locked certifi
+dependency; that PR was unmerged. [HOST-003](#host-003-companion-image-security-maintenance)
+tracks the follow-up to [chat #44](https://github.com/kaw393939/is373-ai-chat/issues/44).
+Host maintenance preserved application images and did not patch their contents.
+
+## HOST-003: companion image security maintenance
+
+[The worked record](book/changes/2026-10-26-certifi.md) links the application
+requirement, [PR #46](https://github.com/kaw393939/is373-ai-chat/pull/46) and
+canonical evidence. Full candidate CI and live environment verification were
+pending when this crosslink was drafted; no new deployment success is claimed
+here. Hosting documentation checks validate these links/content, not the
+application image, TLS behavior or production release. Record those results in
+the owning application repository before claiming the running dependency is patched.

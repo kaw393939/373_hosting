@@ -122,7 +122,30 @@ databases, credentials, decryption material, and raw manifests outside Git.
 This instructor operation adds no required student task. Dated findings are
 AI/operator evidence, not learner responses.
 
-The separate chat restore PR's verification gate found an application dependency
-issue tracked in [chat #44](https://github.com/kaw393939/is373-ai-chat/issues/44).
-That PR remains unmerged with its gate unchanged. Host package updates do not
-patch dependencies inside the preserved application images.
+At maintenance completion, the separate chat restore PR's verification gate had
+found an application dependency issue tracked in
+[chat #44](https://github.com/kaw393939/is373-ai-chat/issues/44). That PR was
+unmerged with its gate unchanged. [HOST-003](#host-003--companion-image-security-maintenance)
+tracks the follow-up; host package updates do not patch preserved application images.
+
+## HOST-003 · Companion image security maintenance
+
+**Status:** application patch merged; main-candidate validation and deployment in progress.
+**Owning issue:** [chat #44](https://github.com/kaw393939/is373-ai-chat/issues/44).
+**Application PR:** [#46](https://github.com/kaw393939/is373-ai-chat/pull/46).
+**Change record:** [certifi maintenance](book/changes/2026-10-26-certifi.md).
+
+The chat application owns its locked dependencies, image tests, release and
+deployment evidence. Its [dependency requirement](https://github.com/kaw393939/is373-ai-chat/blob/main/docs/requirements.md#dependency-security-maintenance)
+and [canonical change record](https://github.com/kaw393939/is373-ai-chat/blob/main/docs/audit/2026-10-26-certifi.md)
+define the scoped certifi correction and actual results; acceptance criteria stay
+in the owning issue. Hosting infrastructure shall preserve unrelated routes,
+certificates and services during the application release.
+
+Distinguish the dependency scan, synthetic TLS checks, and the selected running
+digest in development, QA and production. Retain the existing promotion gate
+and record approval accurately; passing source checks alone does not establish
+a patched deployment. Broader Python/build-tool trust scope stays in
+[chat #45](https://github.com/kaw393939/is373-ai-chat/issues/45).
+This cross-repository worked example adds no required student task or copied
+application implementation here.

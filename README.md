@@ -100,9 +100,13 @@ Run `python3 -m unittest discover -s tests -v` and `bash -n scripts/install-dock
 
 The [HOST-002 maintenance record](book/changes/2026-10-26-maintenance.md) tracks
 separately authorized recovery checks, package updates, and a reboot, with each
-result recorded separately. Recovery, package installation, reboot, and host/HTTP
-checks passed; AI browser review remains pending. It adds no required student
-step.
+result recorded separately. Recovery, package installation, reboot, host/HTTP
+checks and AI browser review passed. It adds no required student step.
+
+The [HOST-003 application dependency follow-up](book/changes/2026-10-26-certifi.md)
+shows why a host update does not patch an existing application image, and how
+image checks connect to reviewed deployment evidence. Its current results live
+in the application's linked issue and change record.
 
 This is a single-server teaching deployment, not high availability. It does not configure GoDaddy automatically, deploy a wildcard certificate, or provide application databases. The scripts do not upgrade Ubuntu or reboot the VPS.
 
