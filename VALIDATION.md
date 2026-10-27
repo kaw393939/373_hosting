@@ -209,3 +209,17 @@ passed. Hosting documentation checks validate links/content, separately from
 these application/live observations. The 26 hosting tests and diff check
 previously passed. Broader trust scope remains open in
 [chat #45](https://github.com/kaw393939/is373-ai-chat/issues/45).
+
+
+## STUDIO-001: first calculator launch lesson
+
+The [October 27 trial record](book/changes/2026-10-27-studio-trial.md) separates
+real setup/deployment/browser/GitHub observations from scripted learner replies.
+Two separate template copies were freshly SSH-cloned. The revised tooling passed
+Black, Pylint, 91 non-E2E tests and two real Docker/Chromium journeys, plus all
+three jobs in the actual trial PR and merged-main CI. Public release/HTTPS and
+positive/negative API checks passed; a controlled unpublished record could not
+reuse a green PR for readiness. Both trial deployments were removed with the
+other fifteen containers' selected identity/state/ports unchanged; disposable
+repos were archived. The template retains pending learner records. These checks
+do not establish actual student learning or comprehensive host security.
