@@ -176,9 +176,36 @@ Its digest is recorded in the owning application repository. Attempt 1 was
 cancelled during slow Playwright OS dependency downloads before E2E pytest;
 the unchanged full rerun passed without a relaxed gate.
 
-Separate public checks found both previews at the accepted commit/version and
-schema 0003; production still matched its 2.0.0 baseline. Eight selected public
-root status/content/TLS baselines matched. [Production run 40437498195](https://github.com/kaw393939/is373-ai-chat/actions/runs/40437498195)
-is waiting for required owner-reviewer approval; no production promotion is
-claimed. Hosting documentation checks validate these links/content, not the
-application image or live server. The 26 hosting tests and diff check passed.
+Before promotion, separate public checks found both previews at the accepted
+commit/version and schema 0003 while production still matched its 2.0.0 baseline.
+Eight selected public root status/content/TLS baselines matched.
+[Production run 40437498195](https://github.com/kaw393939/is373-ai-chat/actions/runs/40437498195)
+then passed at 2026-10-27 05:05:59 UTC. Its production record reports the same
+accepted 2.0.1 image, app commit `ad277cb39fb11accfcafee045e0b6e56ec8960d3`,
+manifest digest `sha256:4da3826dbc0728fd68cba87a099383945c530c714fafebdf4632f8a1ebde7535`
+and unchanged schema 0003, with pre-deployment backup `20261027T050451Z.dump`.
+The [v2.0.1 release](https://github.com/kaw393939/is373-ai-chat/releases/tag/v2.0.1)
+preserves candidate, QA, production, SBOM, TLS, scan and process evidence.
+
+The owner explicitly approved the tested release; the agent executed that
+decision through the existing reviewer gate. Protections stayed unchanged;
+this was not independent two-person review.
+
+Independent HTTP checks at 05:06:44 UTC found all three chat environments healthy
+at 2.0.1 / the accepted commit / schema 0003. Eight root status/final-URL/content
+hash baselines matched over verified TLS; selected calculator and separate QA
+health results were unchanged. Anonymous conversation/admin requests returned
+401, with CSP, HSTS, nosniff and frame-denial headers present. At 05:07:07 UTC,
+real Chromium loaded the logged-out sign-in page, CSS and JavaScript with no
+failed requests, page errors or unexpected HTTP errors. Its automatic refresh
+request's 401 matched the source's logged-out behavior; no sign-in, provider or
+mail call was made. These are bounded public observations, not authenticated
+production or paid-provider acceptance.
+
+All twelve release assets matched their published SHA-256 metadata. Candidate,
+QA attestation and production records identified the same image, commit,
+version and source run; the SBOM listed certifi 2026.10.23 and the TLS report
+passed. Hosting documentation checks validate links/content, separately from
+these application/live observations. The 26 hosting tests and diff check
+previously passed. Broader trust scope remains open in
+[chat #45](https://github.com/kaw393939/is373-ai-chat/issues/45).
