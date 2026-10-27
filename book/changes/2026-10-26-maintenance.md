@@ -9,9 +9,11 @@ and [chat restore checks, PR #43](https://github.com/kaw393939/is373-ai-chat/pul
 The separate application SQLite recovery record remains in its owning private
 repository; its private runtime identities are omitted here.
 
-**Status:** recovery verification and bounded isolated restores passed;
-package installation and reboot remain pending. This is an instructor's operational record, not an added
+**Status:** recovery, updates, reboot, and AI terminal/browser checks passed
+on October 26, 2026 EDT (October 27 UTC). This is an instructor's operational record, not an added
 student exercise or permission to change another server.
+**Reviewed change:** [PR #6](https://github.com/kaw393939/373_hosting/pull/6) ·
+[passing hosting CI](https://github.com/kaw393939/373_hosting/actions/runs/40430799758).
 
 ## 1 · Establish the preflight and recovery scope
 
@@ -25,8 +27,8 @@ not a substitute for the new preflight.
 Preflight also checked effective access policy: SSH root/password login was
 disabled and public-key authentication enabled; UFW allowed only TCP 22/80/443
 for IPv4 and IPv6. Docker-published bindings remain a separate check.
-Package changes and a host reboot can interrupt all hosted services;
-record the start, return, and observed downtime of the bounded maintenance window.
+Package changes and a host reboot can interrupt all hosted services. The actual
+operation times and sampled interruptions are recorded below.
 
 | Recovery input | Scope | Current result |
 |---|---|---|
@@ -68,7 +70,7 @@ database phase including initialization took **2.906 seconds**; the complete
 harness took **28.540 seconds**. Both disposable containers were removed.
 
 The separate SQLite restore passed integrity checks, had zero foreign-key
-violations, and matched all 14 table row counts against the selected snapshot.
+violations, and matched the complete rows in all 14 tables against the selected snapshot.
 Its backup method also passed a synthetic committed-WAL test. That fixture does
 not establish live-source parity or add production observations.
 
@@ -79,10 +81,14 @@ archive was not exercised as a full host restoration.
 
 ## 4 · Review and apply package updates
 
-The refreshed plan contains **22 upgrades**, with no package additions,
-removals, or held packages. Selected runtime candidates include:
+The final exact-version simulation contained **22 upgrades**, with no package
+additions, removals, or held packages. The reviewed version-pinned set was
+installed from **01:04:12.687 to 01:08:05.223 UTC** on October 27 using
+`apt-get install --only-upgrade --no-remove`, with
+`APT::Get::Upgrade-Allow-New=false` and `Dpkg::Options::=--force-confold`.
+APT exited 0 and `dpkg --audit` was clean. Verified runtime versions were:
 
-| Package | Installed → candidate |
+| Package | Before → verified after |
 |---|---|
 | Docker Engine | 29.8.1 → 29.9.2 |
 | containerd | 2.3.6 → 2.4.2 |
@@ -90,20 +96,51 @@ removals, or held packages. Selected runtime candidates include:
 | Buildx | 0.37.1 → 0.38.1 |
 
 Kernel `6.8.0-147` was already installed; no new kernel was a candidate. The
-preflight found none of the removed containerd configuration keys. This stays
-within Ubuntu 24.04; an OS release upgrade is outside the maintenance. Preserve
-application images/releases, private management access, configuration, and data.
+preflight found none of the removed containerd configuration keys. The operation
+stayed within Ubuntu 24.04; no OS release upgrade occurred.
 
-**Result:** candidate review passed; package installation is pending.
+**Result:** installation passed. All 15 container identities/images and recorded
+health, port, and restart fields matched preflight. Six selected deployment
+configuration hashes and ACME bytes were unchanged. No replacement application images were pulled on the VPS and no live
+application containers were recreated. Health checks were not relaxed and
+production databases were not restored.
 
 ## 5 · Reboot and check the running result
 
-Record the reboot and return times, running kernel, required service/container
-state, and published ports. Compare selected public content and release/health
-checks with the preflight. Repeat HOST-001's public dashboard/API denial and
-private SSH dashboard/API access checks, then inspect a normal website.
+Reboot was issued at **01:09:34 UTC**. At **01:11:55.705 UTC**, the host ran
+the expected kernel `6.8.0-147`, its boot ID had changed, and the reboot marker
+was absent. Docker, containerd, SSH, fail2ban, UFW, and unattended upgrades were
+active, as were chat backup and metrics timers. No failed units were reported.
+All 15 containers retained their identities/images and recorded health, port,
+and restart fields; selected configuration/ACME hashes were still unchanged.
 
-**Result:** pending. A returned SSH session alone does not establish service
-recovery. Record AI/operator terminal and browser observations separately from
-any human observation; none supplies a learner response. Keep issue #5 open
-until the agreed acceptance checks and any recovery actions are recorded.
+After both package installation and reboot, eight public sites retained exact
+content hashes, same-host redirects, and trusted TLS; five health/release
+results matched preflight. All 13 selected public management paths returned
+404, while the tunneled dashboard and version API returned 200: all 15 access
+comparisons passed. Applications became healthy after warmup.
+
+An observer collected **1,446 samples**, including **423 non-200 results**,
+across three selected health endpoints. Approximate sampled failure-window
+lengths ranged from **55.025–103.246 seconds** during package updates and
+**79.802–122.212 seconds** around reboot. It observed HTTP 404 and transport
+unavailability before backends became healthy. These endpoint sample windows
+are not exact downtime for all traffic or a service-level guarantee; reboot
+command-to-check time is also not a downtime measurement.
+
+**Result:** host and HTTP checks passed. AI browser review passed: calculator browser/API both returned 42 for 6 × 7;
+the private dashboard showed fourteen enabled routers and sixteen enabled
+services, with zero warnings/errors. These
+operator checks are separate from human observations and learner responses.
+The 2.906-second database restoration measured the small selected snapshot;
+it does not establish full host recovery time.
+
+## Separate application dependency finding
+
+The chat restore PR's book check passed, but its verification gate rejected
+`certifi 2026.7.22` for `GHSA-6q48-6c7w-9gw2`.
+[Chat issue #44](https://github.com/kaw393939/is373-ai-chat/issues/44) tracks the
+recommended update to `2026.10.19` or later. PR #43 remains unmerged and the
+gate remains unchanged. This is separate from the passed host maintenance:
+preserved application images retain their own dependencies, which host package
+updates do not patch.

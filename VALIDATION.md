@@ -132,4 +132,34 @@ source-live-row comparison, authentication/provider/mail restoration or recovery
 of later writes. Private scripts, archives, raw inventories and database values
 stay outside Git. The first archive review found a missing release-selection
 file; the corrected final archive was regenerated and verified before maintenance.
-Package application is underway; reboot/post-maintenance evidence is pending.
+The version-pinned 22-package installation ran from 01:04:12.687 to
+01:08:05.223 UTC, exited 0, and passed `dpkg --audit`. It added or removed no
+packages. Docker Engine 29.9.2, containerd 2.4.2, Compose 5.6.1 and Buildx 0.38.1
+were verified. Local conffiles were preserved; selected deployment/ACME hashes
+were unchanged.
+
+Reboot was issued at 01:09:34 UTC. At 01:11:55.705 UTC, actual `uname` reported
+expected kernel 6.8.0-147, the boot ID had changed, the reboot marker was gone,
+required services/timers were active and no units had failed. All fifteen
+container IDs/images, health, ports and restart policies matched preflight.
+Eight site/content/redirect/TLS and five health/release baselines matched after
+both package application and reboot. The thirteen public denials and two
+SSH-tunnel successes passed again. External TCP checks could not reach the
+three loopback management/app/updater ports.
+
+AI browser review found matching browser/API calculator result 42 for 6 × 7;
+the tunneled Traefik dashboard showed fourteen enabled routers and sixteen
+services, with zero warnings/errors. These are operator observations, not
+human acceptance or learner responses.
+
+The external observer recorded 1,446 HTTPS samples across three health
+endpoints. Sampled failure windows were 55.025–103.246 seconds during package
+restart and 79.802–122.212 seconds around reboot. Transport failures and 404s
+preceded healthy backends. These are approximate endpoint observations, not
+full-traffic downtime or an availability guarantee. No healthcheck or gate
+was weakened to obtain a pass.
+
+The chat documentation PR's book check passed but its application vulnerability
+gate failed for an existing locked certifi dependency. It remains unmerged;
+[chat #44](https://github.com/kaw393939/is373-ai-chat/issues/44) tracks remediation.
+Host maintenance preserved application images and does not patch their contents.
