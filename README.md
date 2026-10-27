@@ -18,7 +18,7 @@ flowchart LR
     Browser -->|HTTP 80 / HTTPS 443| Traefik
     Traefik -->|Host rule| ApacheA[Apache: first domain]
     Traefik -->|Host rule| ApacheB[Apache: second domain]
-    Traefik --> Dashboard[Dashboard and API]
+    Admin[Administrator browser] -->|SSH tunnel| Dashboard[Private dashboard and API]
     Traefik <-->|ACME validation and renewal| LE[Let's Encrypt]
 ```
 
@@ -48,14 +48,17 @@ Run these commands **on a fresh Ubuntu VPS**, after setting your DNS records. Do
 ```bash
 sudo apt-get update
 sudo apt-get install -y git python3
-git clone https://github.com/kaw393939/373_hosting.git
+git clone git@github.com:kaw393939/373_hosting.git
 cd 373_hosting
 sudo bash scripts/install-docker.sh
 cp examples/hosting.example.json hosting.json
 nano hosting.json
 ```
 
-Replace every example hostname and the email address with your own. The dashboard hostname must be different from all website hostnames.
+Use your class GitHub SSH setup for the clone. Replace the website hostnames and
+email address with your own. The `dashboard` field remains for compatibility and
+must differ from the websites; it creates no public route and needs no new DNS
+record or certificate.
 
 ```bash
 python3 scripts/configure.py --config hosting.json --output runtime
@@ -64,9 +67,15 @@ sudo docker compose -f runtime/compose.yaml up -d
 python3 scripts/verify.py --config hosting.json
 ```
 
-Certificate issuance may take a few minutes; rerun verification after startup. Open `https://YOUR_DASHBOARD_HOST/dashboard/` (keep the final slash).
+Certificate issuance may take a few minutes; rerun verification after startup. From a terminal on your own computer, open the private dashboard tunnel and leave it running:
 
-**Lab access:** the dashboard is deliberately password-free, matching the classroom demonstration. Anyone who can reach it can view routing and service metadata. [Chapter 5](book/05-https-dashboard.md) explains how to add Basic Authentication before using this as a longer-lived deployment. Traefik's dashboard is an inspection interface; edit Compose to change the stack.
+```bash
+ssh -N -o ExitOnForwardFailure=yes -L 127.0.0.1:18082:127.0.0.1:8082 USER@SERVER
+```
+
+Open `http://127.0.0.1:18082/dashboard/` (keep the final slash). SSH authenticates the connection and encrypts the tunnel; the dashboard is bound to the server's loopback address. Stop the tunnel with Ctrl+C. [Chapter 5](book/05-https-dashboard.md) explains the boundary and optional extra authentication. The dashboard is an inspection interface; edit Compose to change the stack.
+
+The [HOST-001 specification](SPEC.md) and [dated worked change](book/changes/2026-10-26-dashboard.md) track the change from the historical public dashboard. Repository changes alone do not update an existing VPS.
 
 ## Project map
 
@@ -80,7 +89,10 @@ tests/                        Offline generator checks
 runtime/                      Generated deployment; ignored by Git
 ```
 
-The example uses the same two-domain layout as the class demonstration: apex names, `www`, a development host, and a Traefik host. It does not contain a real server address, credentials, or certificate keys. Your local configuration and generated runtime are ignored by Git.
+The example uses the same two-domain website layout as the class demonstration:
+apex names, `www`, and a development host. It contains no real server address,
+credentials, or certificate keys. Local configuration and generated runtime are
+ignored by Git.
 
 ## Validation and limits
 
@@ -98,7 +110,7 @@ This is a single-server teaching deployment, not high availability. It does not 
 - [Let's Encrypt challenge types](https://letsencrypt.org/docs/challenge-types/)
 - [Apache HTTP Server documentation](https://httpd.apache.org/docs/2.4/)
 
-Configuration reviewed September 29, 2026. The Traefik version is pinned; the Apache `2.4-alpine` tag follows Apache 2.4 updates. Review upstream release notes before upgrading.
+Configuration reviewed October 26, 2026. The Traefik version is pinned; the Apache `2.4-alpine` tag follows Apache 2.4 updates. Review upstream release notes before upgrading.
 
 ## Repository boundary
 

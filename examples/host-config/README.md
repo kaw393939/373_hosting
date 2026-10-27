@@ -11,6 +11,10 @@ with your own VPS address. The wildcard row is optional, and is not a wildcard
 certificate. Check for conflicting AAAA records separately. See Chapter 2 before
 changing DNS or firewall settings.
 
+The private dashboard uses an SSH tunnel, so the worksheet requires no public
+`traefik` DNS record. An existing management hostname can remain for a public
+denial check, but the private route does not request or renew its certificate.
+
 The Docker installer downloads the repository's public signing key to
 `/etc/apt/keyrings/docker.asc`. That key is acquired from Docker's official URL;
 it is not a private credential or a file students should invent. The installer

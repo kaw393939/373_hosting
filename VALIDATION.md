@@ -1,6 +1,6 @@
 # Validation record
 
-The classroom deployment behind this book used Ubuntu 24.04, Docker Engine 29.8.1, Traefik 3.7.13, and the official Apache `httpd:2.4-alpine` image. Five website hostnames returned their distinct welcome pages over trusted HTTPS; HTTP redirected to HTTPS. The dashboard and its API returned 200 without authentication after the instructor disabled the password. Six public certificates were issued.
+The original classroom deployment behind this book used Ubuntu 24.04, Docker Engine 29.8.1, Traefik 3.7.13, and the official Apache `httpd:2.4-alpine` image. Five website hostnames returned their distinct welcome pages over trusted HTTPS; HTTP redirected to HTTPS. Its dashboard and API returned 200 without authentication after the instructor disabled the password. Six public certificates were issued. These are historical observations, not the desired dashboard policy.
 
 The repository generalizes that deployment with replaceable hostnames. It does not export the live server's passwords, ACME state, or private keys.
 
@@ -14,6 +14,45 @@ overlay, and both overlays combined. Overlay validation checks the merged model;
 it does not request certificates or provision a password file. The optional
 file-based Traefik configuration is an instructional equivalent of the base CLI
 settings, not a change applied to the classroom server.
+
+## HOST-001: private dashboard
+
+The [specification](SPEC.md) and [worked change record](book/changes/2026-10-26-dashboard.md)
+track [issue #3](https://github.com/kaw393939/373_hosting/issues/3). The revised
+base model routes the dashboard/API only through a dedicated entry point,
+published as `127.0.0.1:8082:8080`; administrators reach it through SSH. Dashboard
+and API paths on selected public HTTPS origins must return 404 while websites
+retain their redirects, trusted HTTPS, and content.
+
+Repository verification completed before application:
+
+- `python3 -m unittest discover -s tests -v`: 26 tests passed.
+- `bash -n scripts/install-docker.sh` and `git diff --check`: passed.
+- Generated, base example, file overlay, authentication overlay and combined
+  Compose models: valid.
+- `python3 scripts/smoke-dashboard.py`: a disposable real Traefik 3.7.13
+  reproduced the public API failure despite `api.insecure=false`, then passed
+  13 public denial and two private-access comparisons; its ordinary route
+  still returned 200. No Docker socket or production infrastructure was used.
+- Local Markdown links resolve.
+
+The isolated check initially failed readiness because Traefik does not accept
+a `.json` extension for its file provider. The fixture now uses `.yaml`
+(JSON notation is valid YAML); the assertion was retained and rerun.
+
+Live application is pending. The first SSH session could read the deployment,
+but Docker access was denied and noninteractive sudo required a password. The
+owner subsequently established a privileged session. A successful SSH login
+alone does not establish permission to recreate the proxy. Until the migration
+is applied and its results are recorded, the observed public exposure remains
+unresolved. Offline checks and an isolated container check cannot establish the
+live server's final state.
+
+Public request checks use trusted TLS on a configured website by default. An
+existing dashboard origin can also be checked while its old certificate remains
+valid; the private route no longer requests or renews that certificate. Selected
+requests and configuration assertions provide different evidence, and neither
+is a test of every possible public hostname.
 
 ## Companion integration
 

@@ -22,7 +22,7 @@ Use the base Compose file by itself first. These optional files show two deliber
 
 - [traefik.yml](traefik.yml) is a complete file-based equivalent of the base Compose `command` options, with comments.
 - [compose.file-config.yaml](compose.file-config.yaml) replaces the command list with a config-file argument and mounts `traefik.yml`. It is an overlay, not a standalone stack.
-- [compose.auth.yaml](compose.auth.yaml) adds dashboard authentication using a locally created password hash file. It too is an overlay.
+- [compose.auth.yaml](compose.auth.yaml) adds optional authentication inside the dashboard's SSH tunnel using a locally created password hash file. It too is an overlay.
 
 Do not copy options into both CLI flags and the static Traefik configuration. Select one static configuration method. Dynamic routing labels remain in Compose in either method.
 
@@ -35,7 +35,7 @@ cp -R examples/full-stack runtime-manual
 cd runtime-manual
 ```
 
-Edit `compose.yaml`: replace all five website names and the dashboard hostname in the Host rules, replace the email in the ACME option, and edit each welcome page. You can keep the example directory names as local folder names; the bind mount, not the directory's spelling, determines which content a container serves. If you rename folders, update their mount paths too.
+Edit `compose.yaml`: replace all five website names in their Host rules, replace the email in the ACME option, and edit each welcome page. The dashboard uses a private path rule, not a public hostname rule. You can keep the example directory names as local folder names; the bind mount, not the directory's spelling, determines which content a container serves. If you rename folders, update their mount paths too.
 
 Prepare certificate storage without truncating an existing file:
 
@@ -48,6 +48,18 @@ sudo docker compose up -d
 ```
 
 This is an alternative to the generated deployment, not a second stack to start alongside it. Both use ports 80/443, project `hosting373`, and network `hosting-web`.
+
+Both also publish the dashboard/API as `127.0.0.1:8082:8080`. From your own
+computer, leave this SSH tunnel running:
+
+```bash
+ssh -N -o ExitOnForwardFailure=yes -L 127.0.0.1:18082:127.0.0.1:8082 USER@SERVER
+```
+
+Open `http://127.0.0.1:18082/dashboard/`; stop the tunnel with Ctrl+C. Dashboard
+and API paths on a public website's HTTPS origin should return 404 while
+websites still work. The private route requests no dashboard hostname certificate.
+See [Chapter 5](../../book/05-https-dashboard.md) for the access boundary.
 
 ### Use a separate Traefik configuration file
 
@@ -79,7 +91,11 @@ The `-c` flag creates/replaces the password file; omit it when changing a user i
 sudo docker compose -f compose.yaml -f compose.file-config.yaml -f compose.auth.yaml up -d
 ```
 
-The base example has no password, matching the initial classroom lab. The authentication overlay protects both the dashboard and its API through the same router.
+The base example relies on SSH access to its loopback-only management port. The
+authentication overlay adds a credential check for both the dashboard and API
+through that tunnel; it does not create a public dashboard route. Keep the same
+overlay arguments when applying later changes, including a regenerated base
+file.
 
 ## Other machine-level files
 
