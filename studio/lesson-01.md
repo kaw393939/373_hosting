@@ -127,3 +127,8 @@ Do not turn a missing result into a completion claim.
 explanation/observation; and verified GitHub PR/issue state. Timestamps establish
 recorded activity, not time spent or learning. No extra application feature,
 server upgrade or rollback exercise is required here.
+
+When you are ready for the second part, the
+[App Studio README](https://github.com/kaw393939/is373-app-studio#readme)
+starts a separate local application project. Keep this clone for hosting; you
+do not need to deploy the new app during its first lessons.
