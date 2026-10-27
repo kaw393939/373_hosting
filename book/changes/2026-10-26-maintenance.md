@@ -13,7 +13,7 @@ repository; its private runtime identities are omitted here.
 on October 26, 2026 EDT (October 27 UTC). This is an instructor's operational record, not an added
 student exercise or permission to change another server.
 **Reviewed change:** [PR #6](https://github.com/kaw393939/373_hosting/pull/6) ·
-[passing hosting CI](https://github.com/kaw393939/373_hosting/actions/runs/40430799758).
+[passing hosting CI](https://github.com/kaw393939/373_hosting/actions/runs/40431472341).
 
 ## 1 · Establish the preflight and recovery scope
 
@@ -100,8 +100,8 @@ preflight found none of the removed containerd configuration keys. The operation
 stayed within Ubuntu 24.04; no OS release upgrade occurred.
 
 **Result:** installation passed. All 15 container identities/images and recorded
-health, port, and restart fields matched preflight. Six selected deployment
-configuration hashes and ACME bytes were unchanged. No replacement application images were pulled on the VPS and no live
+health, port, and restart fields matched preflight. Selected configuration files across six deployment directories and ACME bytes
+were unchanged. No replacement application images were pulled on the VPS and no live
 application containers were recreated. Health checks were not relaxed and
 production databases were not restored.
 

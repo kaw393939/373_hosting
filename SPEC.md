@@ -63,7 +63,7 @@ from any later human review.
 **Status:** applied and verified, including AI browser review, October 26, 2026 EDT.
 **Issue:** [#5](https://github.com/kaw393939/373_hosting/issues/5).
 **PR:** [#6](https://github.com/kaw393939/373_hosting/pull/6).
-**CI:** [passing hosting run](https://github.com/kaw393939/373_hosting/actions/runs/40430799758).
+**CI:** [passing hosting run](https://github.com/kaw393939/373_hosting/actions/runs/40431472341).
 **Change record:** [October 26 maintenance](book/changes/2026-10-26-maintenance.md).
 **Data recovery:** [chat #4](https://github.com/kaw393939/is373-ai-chat/issues/4)
 and [restore checks in chat PR #43](https://github.com/kaw393939/is373-ai-chat/pull/43).
@@ -102,7 +102,7 @@ The maintenance shall:
 | Reviewed package candidates and actual installation result | 22 version-pinned upgrades applied at 01:04:12.687–01:08:05.223 UTC; APT exit 0, clean dpkg audit; no additions/removals/held packages |
 | Reboot, running kernel, required services and ports | Issued 01:09:34 UTC; 01:11:55.705 UTC checks found expected kernel `6.8.0-147`, changed boot ID, no reboot marker/failed units, and required services/timers active |
 | Public negative/private positive HOST-001 checks and site/release regressions | After packages and reboot: 13 public management paths returned 404, two tunneled checks returned 200, eight site baselines and five health/release results matched; AI browser review passed |
-| Preservation | All 15 container identities/images and recorded health, port, and restart fields matched preflight; six selected deployment configurations and ACME hashes unchanged |
+| Preservation | All 15 container identities/images and recorded health, port, and restart fields matched preflight; selected configuration files across six deployment directories and ACME hashes unchanged |
 
 Docker 29.9.2, containerd 2.4.2, Compose 5.6.1, and Buildx 0.38.1 were verified.
 An observer recorded sampled failure windows of approximately 55–103 seconds
