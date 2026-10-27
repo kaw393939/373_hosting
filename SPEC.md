@@ -60,12 +60,54 @@ from any later human review.
 
 ## HOST-002 · Controlled host maintenance
 
-**Status:** planned; no package upgrades or reboot performed in HOST-001.
+**Status:** recovery verification and bounded isolated restores passed; package installation and reboot pending.
 **Issue:** [#5](https://github.com/kaw393939/373_hosting/issues/5).
+**Change record:** [October 26 maintenance](book/changes/2026-10-26-maintenance.md).
+**Data recovery:** [chat #4](https://github.com/kaw393939/is373-ai-chat/issues/4)
+and [restore checks in chat PR #43](https://github.com/kaw393939/is373-ai-chat/pull/43).
+The separate application SQLite recovery record stays in its owning private repository.
 
-The October 26 audit observed a pending kernel reboot and cached package
-updates. Refresh and review candidates, verify recovery prerequisites, then
-apply selected updates in a controlled interruption window. Acceptance requires
-the expected running kernel, no failed required services or unintended public
-ports, preserved public release/content baselines, and HOST-001 still passing.
-The issue records the staged checks; live results remain pending.
+The October 26 preflight observed Ubuntu 24.04.5, kernel `6.8.0-146` running
+with `6.8.0-147` installed, a reboot marker, and 15 running containers. A fresh
+encrypted pre-maintenance snapshot was verified off-host, and the selected chat
+PostgreSQL and separate application SQLite restores passed. The owner
+authorized backup verification and a bounded isolated
+restoration before selected package updates and a controlled reboot. No package
+upgrade or reboot was performed as part of HOST-001.
+
+The maintenance shall:
+
+- Identify separate recovery inputs for the historical encrypted chat backup,
+  a separate application's SQLite data, and proxy configuration/certificate state.
+  Record each recovery point and any missing coverage; do not infer that one
+  archive contains the other systems' data.
+- Verify a protected off-host copy with matching hashes, successful decryption
+  where applicable, and a reviewed manifest. Then restore the agreed data into
+  an isolated location and check its integrity and supported application reads.
+  Artifact verification alone is not a restoration test.
+- Refresh APT metadata and review upgrade candidates before applying selected
+  packages within the existing Ubuntu release. Preserve application image and
+  release identities, persistent data, certificate state, and HOST-001 policy.
+- Record the maintenance/reboot interruption and verify the expected running
+  kernel, required services, ports, public sites/releases, and private dashboard
+  access afterward. Record recovery actions and remaining gaps honestly.
+
+| Acceptance check | Evidence/status |
+|---|---|
+| Recovery inputs and recovery points identified separately | Final snapshot at 2026-10-27 01:00:37.692004 UTC; coverage corrected before maintenance |
+| Off-host hashes, decryption, and manifest verified | Passed at 01:01:21 UTC: authenticated decryption and all 232 regular-file hashes/path checks |
+| Bounded isolated restore and application/data checks | Earlier daily chat archive and three fresh PostgreSQL dumps passed data/ORM checks; separate SQLite integrity, foreign-key, and 14-table snapshot comparisons passed |
+| Reviewed package candidates and actual installation result | Metadata refreshed; 22 upgrades, no additions/removals/held packages; installation pending |
+| Reboot duration, running kernel, required services and ports | Pending |
+| Public negative/private positive HOST-001 checks and site/release regressions | Pending |
+
+This authorizes operational maintenance, not an Ubuntu release upgrade or a
+new application release. The isolated restoration establishes only its recorded
+scope; it does not establish a full host rebuild, public DNS/TLS recovery, or
+recovery of writes newer than the verified backup. SQLite checks establish the
+selected snapshot, not live-source parity; a full authenticated application
+journey was not exercised. Protected configuration files were verified without
+extraction on the Mac. Keep private archives,
+databases, credentials, decryption material, and raw manifests outside Git.
+This instructor operation adds no required student task. Dated findings are
+AI/operator evidence, not learner responses.
