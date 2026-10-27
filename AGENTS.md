@@ -95,6 +95,9 @@ actual result. Never count a skipped/unrun E2E as passed or install Docker solel
 to get past this lesson. The remote deployment's Docker does not supply local E2E.
 Do not weaken assertions, lint rules, TLS or readiness to get a pass.
 
+If a check or the learner's URL is unavailable, resolve that boundary first.
+Do not substitute the classroom example or local fixture for their deployment.
+
 Show one actual check's input, expectation and result without explaining the
 conclusion first. Ask what it establishes and what it leaves open; wait and
 offer a hint if needed. Positive/negative describe cases; unit/integration/E2E

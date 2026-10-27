@@ -99,10 +99,26 @@ in LEARNING.md. Review/correct/remove the AI-drafted excerpts before they are
 committed or pushed. They are a summary, not a transcript or proof of authorship.
 
 Review the diff, commit and push the branch over SSH, and open a PR linked to the
-lesson issue when you are ready. Record its actual latest CI result and
+lesson issue when you are ready. If the agent cannot use a logged-in GitHub
+browser/connector, you create it on your copy's GitHub page: **Pull requests →
+New pull request**, base `main`, compare your feature branch. Give the coach
+the created PR URL; no extra CLI or shared login is needed.
+Record its actual latest CI result and
 save its link with `python3 studio.py issue --pr ACTUAL_PR_URL`. Merge and
 close the issue only when the recorded scope is satisfied, preserving any
 missing learner explanation as a gap rather than inventing it.
+
+After merging and closing the issue, return to your LAPTOP clone and run one
+command at a time:
+
+```sh
+git switch main
+git pull --ff-only origin main
+python3 studio.py status
+```
+
+Discuss any remaining checkpoint or unavailable GitHub check with the coach.
+Do not turn a missing result into a completion claim.
 
 **Done has three parts:** technical checks and live release evidence; your actual
 explanation/observation; and verified GitHub PR/issue state. Timestamps establish
