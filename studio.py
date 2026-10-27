@@ -152,6 +152,21 @@ def check(fast):
         )
 
 
+def runtime_step(config, operation):
+    """Save actual observations and show each remote report only once."""
+    report = getattr(runtime, operation)(config)
+    if operation in ("launch", "verify"):
+        report = progress.record_runtime(config, report)
+    # Interactive SSH streams the helper report and the ordinary sudo prompt.
+    streamed = config["host"] != "local" and (
+        operation in ("launch", "verify") or (operation == "doctor" and config["sudo"])
+    )
+    if not streamed:
+        print(json.dumps(report, indent=2))
+    elif operation in ("launch", "verify"):
+        print("✅ Dated runtime observation saved locally; use report to export.")
+
+
 def main():
     """Keep each command explicit and make failures useful to a learner."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -234,10 +249,7 @@ def main():
                     "Review it before committing."
                 )
             else:
-                report = getattr(runtime, args.command)(config)
-                if args.command in ("launch", "verify"):
-                    report = progress.record_runtime(config, report)
-                print(json.dumps(report, indent=2))
+                runtime_step(config, args.command)
     except (ValueError, RuntimeError, OSError, subprocess.SubprocessError) as error:
         parser.exit(
             1,

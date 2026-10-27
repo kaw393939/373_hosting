@@ -1,7 +1,10 @@
 """Safety and evidence tests for the bounded calculator operation."""
 
 import json
+import io
 import subprocess
+import ssl
+import urllib.error
 
 import pytest
 
@@ -280,3 +283,115 @@ def test_sudo_report_is_owned_by_invoking_operator(monkeypatch, tmp_path):
     remote._save_report(tmp_path.resolve(), {"status": "passed"})
     assert ownership == [("report.json", 1234, 1235)]
     assert (tmp_path / "report.json").stat().st_mode & 0o777 == 0o600
+
+
+def test_interactive_remote_tls_failure_is_not_reported_as_ssh_access(monkeypatch):
+    class Process:
+        stdout = io.StringIO(
+            "[sudo] password: \n"
+            "Studio check stopped: HTTPS certificate verification failed\n"
+        )
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_arguments):
+            return False
+
+        def wait(self):
+            return 1
+
+    monkeypatch.setattr(subprocess, "Popen", lambda *_args, **_kwargs: Process())
+    with pytest.raises(
+        RuntimeError, match="Remote check stopped: HTTPS certificate"
+    ) as caught:
+        runtime._ssh(HOSTED, "reviewed-helper", interactive=True)
+    assert "SSH connection failed" not in str(caught.value)
+
+
+def test_remote_transport_failure_does_not_echo_unselected_stderr(monkeypatch):
+    def failed(*_args, **_kwargs):
+        raise subprocess.CalledProcessError(
+            255, [], stderr="unselected transport output"
+        )
+
+    monkeypatch.setattr(subprocess, "run", failed)
+    with pytest.raises(RuntimeError, match="SSH connection failed") as caught:
+        runtime._ssh(HOSTED, "reviewed-helper")
+    assert "unselected transport output" not in str(caught.value)
+
+
+def test_new_route_retries_certificate_and_proxy_readiness(monkeypatch):
+    clock = [0.0]
+    calls = []
+    attempts = iter(["certificate", "proxy", "ready"])
+    monkeypatch.setattr(remote.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(
+        remote.time, "sleep", lambda seconds: clock.__setitem__(0, clock[0] + seconds)
+    )
+
+    def waiting(origin, path, **kwargs):
+        calls.append((origin, path, kwargs))
+        attempt = next(attempts)
+        if attempt == "certificate":
+            raise urllib.error.URLError(
+                ssl.SSLCertVerificationError("certificate pending")
+            )
+        if attempt == "proxy":
+            return 503, {}
+        return fake_http(origin, path)
+
+    monkeypatch.setattr(remote, "_http_json", waiting)
+    remote._wait_new_route(HOSTED, RELEASE)
+    assert len(calls) == 3
+    assert clock[0] == 4
+    assert all(call[1] == "/health" for call in calls)
+
+
+def test_new_route_wait_is_bounded_and_never_accepts_untrusted_tls(monkeypatch):
+    clock = [0.0]
+    monkeypatch.setattr(remote, "TLS_READY_TIMEOUT", 5)
+    monkeypatch.setattr(remote.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(
+        remote.time, "sleep", lambda seconds: clock.__setitem__(0, clock[0] + seconds)
+    )
+
+    def untrusted(*_args, **_kwargs):
+        raise urllib.error.URLError(ssl.SSLCertVerificationError("self-signed"))
+
+    monkeypatch.setattr(remote, "_http_json", untrusted)
+    with pytest.raises(RuntimeError, match="Certificate checks were not bypassed"):
+        remote._wait_new_route(HOSTED, RELEASE)
+    assert clock[0] == 5
+
+
+def test_new_route_wrong_commit_is_not_retried(monkeypatch):
+    calls = []
+
+    def stale(*_args, **_kwargs):
+        calls.append(True)
+        return 200, {"status": "ok", "environment": "production", "commit": "0" * 40}
+
+    monkeypatch.setattr(remote, "_http_json", stale)
+    with pytest.raises(RuntimeError, match="expected production commit"):
+        remote._wait_new_route(HOSTED, RELEASE)
+    assert len(calls) == 1
+
+
+def test_verify_existing_route_does_not_wait_or_bypass_certificate_failure(monkeypatch):
+    existing = container(rules=["Host(`calculator.example.org`)"])
+    stub_docker(monkeypatch, [existing])
+    monkeypatch.setattr(remote, "_image_info", lambda *_: image_info())
+
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError(
+            "Existing-route verification must not invoke launch readiness"
+        )
+
+    def untrusted(*_args, **_kwargs):
+        raise urllib.error.URLError(ssl.SSLCertVerificationError("self-signed"))
+
+    monkeypatch.setattr(remote, "_wait_new_route", forbidden)
+    monkeypatch.setattr(remote, "_http_json", untrusted)
+    with pytest.raises(urllib.error.URLError):
+        remote.verify(HOSTED, RELEASE)

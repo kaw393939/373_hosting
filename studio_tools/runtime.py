@@ -73,7 +73,9 @@ def _ssh(config, command, *, source=None, interactive=False):
                     transcript.append(character)
                 code = process.wait()
                 if code:
-                    raise subprocess.CalledProcessError(code, arguments)
+                    raise subprocess.CalledProcessError(
+                        code, arguments, output="".join(transcript)
+                    )
                 return subprocess.CompletedProcess(
                     arguments, code, "".join(transcript), ""
                 )
@@ -85,12 +87,39 @@ def _ssh(config, command, *, source=None, interactive=False):
             check=True,
             timeout=None if interactive else 120,
         )
+    except subprocess.CalledProcessError as error:
+        raise RuntimeError(_remote_failure(error)) from error
     except (OSError, subprocess.SubprocessError) as error:
         raise RuntimeError(
             "The SSH operation stopped. Use your existing class SSH connection and "
             "Docker permissions in your terminal. If selected, sudo asks there; "
             "the studio does not receive or save a password."
         ) from error
+
+
+def _remote_failure(error):
+    """Keep a helper's selected diagnostic separate from SSH transport failure."""
+    output = "\n".join(
+        value for value in (error.stdout, error.stderr) if isinstance(value, str)
+    )
+    marker = "Studio check stopped:"
+    for line in reversed(output.splitlines()):
+        if line.lstrip().startswith(marker):
+            detail = line.strip().removeprefix(marker).strip()
+            detail = "".join(
+                character for character in detail if character.isprintable()
+            )
+            return f"Remote check stopped: {detail[:1000]}"
+    if error.returncode == 255:
+        return (
+            "The SSH connection failed. Check your usual class SSH access; "
+            "no server check was confirmed."
+        )
+    return (
+        f"The remote command stopped with exit {error.returncode}. "
+        "Check the terminal message above for the command or sudo failure; "
+        "this does not establish an SSH connection failure."
+    )
 
 
 def _scp(source, destination):

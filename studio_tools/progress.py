@@ -348,7 +348,13 @@ def display(result):
         )
     elif not result["learner_records"]["Prediction"]:
         print(
-            "👉 Next: predict the request path with your coach before the launch plan."
+            "👉 Missing record: the pre-plan request-path prediction. "
+            "Preserve any earlier gap; do not invent a prediction in hindsight."
+            if result["runtime_observation"]
+            else (
+                "👉 Next: predict the request path with your coach "
+                "before the launch plan."
+            )
         )
     elif not result["runtime_observation"]:
         print(

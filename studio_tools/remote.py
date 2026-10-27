@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import re
 import socket
+import ssl
 import subprocess
 import time
 import urllib.error
@@ -33,6 +34,8 @@ SSH_TARGET = re.compile(
 )
 SSH_ALIAS = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,252}$")
 IMAGE = re.compile(r"(?:docker\.io/)?kaw393939/is373_ci_cd@sha256:[0-9a-f]{64}$")
+TLS_READY_TIMEOUT = 60
+TLS_RETRY_INTERVAL = 2
 
 
 def validate_config(config):
@@ -380,7 +383,7 @@ def doctor(config, release):
     }
 
 
-def _http_json(origin, path, payload=None):
+def _http_json(origin, path, payload=None, *, timeout=8):
     """Check the requested origin with ordinary TLS and no successful redirects."""
     url = origin + path
     request = urllib.request.Request(
@@ -389,7 +392,7 @@ def _http_json(origin, path, payload=None):
         headers={"Content-Type": "application/json", "Accept": "application/json"},
     )
     try:
-        response = urllib.request.urlopen(request, timeout=8)
+        response = urllib.request.urlopen(request, timeout=timeout)
     except urllib.error.HTTPError as error:
         response = error
     with response:
@@ -405,23 +408,79 @@ def _http_json(origin, path, payload=None):
         try:
             return response.status, json.loads(raw)
         except (ValueError, UnicodeError) as error:
+            if response.status in {404, 502, 503}:
+                return response.status, {}
             raise RuntimeError(
                 "Application check did not return the expected JSON"
             ) from error
 
 
+def _assert_health(status, health, release):
+    """A reachable endpoint must still identify the selected production release."""
+    if (
+        status != 200
+        or not isinstance(health, dict)
+        or any(
+            health.get(key) != value
+            for key, value in {
+                "status": "ok",
+                "environment": "production",
+                "commit": release["commit"],
+            }.items()
+        )
+    ):
+        raise RuntimeError("Health does not identify the expected production commit")
+
+
+def _wait_new_route(config, release):
+    """Allow a new proxy route/ACME certificate to become ready with trust intact."""
+    deadline = time.monotonic() + TLS_READY_TIMEOUT
+    reason = "the new HTTPS route is not ready"
+    print(
+        f"Waiting up to {TLS_READY_TIMEOUT}s for trusted HTTPS on the new route.",
+        flush=True,
+    )
+    while remaining := deadline - time.monotonic():
+        if remaining <= 0:
+            break
+        try:
+            status, health = _http_json(
+                config["url"], "/health", timeout=min(8, remaining)
+            )
+        except (
+            urllib.error.URLError,
+            ssl.SSLError,
+            TimeoutError,
+            ConnectionError,
+        ) as error:
+            cause = getattr(error, "reason", error)
+            reason = (
+                "certificate verification has not succeeded"
+                if isinstance(cause, ssl.SSLCertVerificationError)
+                else "the HTTPS connection has not succeeded"
+            )
+        else:
+            if status == 200:
+                _assert_health(status, health, release)
+                return
+            if status not in {404, 502, 503}:
+                raise RuntimeError(f"New HTTPS route returned unexpected HTTP {status}")
+            reason = f"the new route still returns HTTP {status}"
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            break
+        time.sleep(min(TLS_RETRY_INTERVAL, remaining))
+    raise RuntimeError(
+        f"Calculator started, but trusted HTTPS was not ready: {reason}. "
+        "Check the hostname, DNS and existing proxy's certificate resolver, "
+        "then run verify. Certificate checks were not bypassed."
+    )
+
+
 def _http_checks(config, release):
     """Exercise one valid calculation and two distinct invalid-input contracts."""
     status, health = _http_json(config["url"], "/health")
-    if status != 200 or any(
-        health.get(key) != value
-        for key, value in {
-            "status": "ok",
-            "environment": "production",
-            "commit": release["commit"],
-        }.items()
-    ):
-        raise RuntimeError("Health does not identify the expected production commit")
+    _assert_health(status, health, release)
     positive_status, positive = _http_json(
         config["url"], "/api/calculate", {"a": 6, "b": 7, "operation": "multiply"}
     )
@@ -481,6 +540,8 @@ def _report(config, release, selected, before, provenance):
         raise RuntimeError("The selected calculator is not running")
     image = _image_info(config, selected["image_id"])
     _assert_image(image, release)
+    if provenance == "launched" and mode(config) == "hosted":
+        _wait_new_route(config, release)
     health, checks = _http_checks(config, release)
     after = _snapshot(config)
     preservation = _preservation(before, after, selected)
