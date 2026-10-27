@@ -24,7 +24,7 @@ df -h /
 sudo ufw status verbose
 ```
 
-Ports 80 and 443 must be free. If another web server already owns them, investigate before stopping services. This book assumes a fresh machine; it is not an automatic migration tool.
+Ports 80 and 443 and loopback port 8082 must be free. If another service already owns them, investigate before stopping services. This book assumes a fresh machine; it is not an automatic migration tool. A successful SSH login also does not establish Docker administrator access; later commands use `sudo docker`.
 
 ## DNS lab
 
@@ -35,12 +35,16 @@ In your DNS provider's record editor, create records like these. Replace `SERVER
 | example.com | A | @ | SERVER_IP |
 | example.com | A | www | SERVER_IP |
 | example.com | A | dev | SERVER_IP |
-| example.com | A | traefik | SERVER_IP |
 | example.org | A | @ | SERVER_IP |
 | example.org | A | www | SERVER_IP |
 | example.org | A | * | SERVER_IP, optional |
 
 `@` means the zone's root name. A wildcard DNS record answers for eligible otherwise-undefined names; it does not cover the zone root or grant a wildcard TLS certificate. Existing specific records take precedence. Leave unrelated mail records alone.
+
+The dashboard uses the [SSH tunnel](05-https-dashboard.md) and needs no public
+DNS record. Only website routers request public certificates in this model.
+An existing dashboard DNS record may remain for a denial check, but the private
+route no longer requests or renews a certificate for that name.
 
 Use a short TTL such as 600 seconds while learning. TTL controls resolver caching; changing a record does not instantly clear every cache.
 
@@ -51,7 +55,7 @@ sudo apt-get update
 sudo apt-get install -y dnsutils
 dig +short A example.com
 dig +short AAAA example.com
-dig @1.1.1.1 +short A traefik.example.com
+dig @1.1.1.1 +short A www.example.com
 ```
 
 An old AAAA record can send IPv6-capable clients to a different machine. Correct or remove it if this deployment has no working public IPv6 service. Check each hostname, not just the apex.
@@ -70,6 +74,9 @@ sudo ufw status verbose
 
 If SSH uses another port, explicitly allow that port first. Any provider-level cloud firewall must also allow inbound TCP 80 and 443, and your SSH connection. HTTP-01 certificate validation requires public access to port 80.
 
-Docker-published ports can bypass UFW filtering. The lab publishes only Traefik's 80 and 443; do not add public port mappings to databases or Apache just to make routing work. See [Docker's firewall explanation](https://docs.docker.com/engine/network/packet-filtering-firewalls/).
+Docker-published ports can bypass UFW filtering. The lab publishes Traefik's 80
+and 443 publicly and management port 8082 only on `127.0.0.1`. Do not open 8082
+in the host or cloud firewall or add public port mappings to databases or Apache
+just to make routing work. See [Docker's firewall explanation](https://docs.docker.com/engine/network/packet-filtering-firewalls/).
 
 **Checkpoint:** from a second terminal, confirm SSH still works. Record the A/AAAA answers for every hostname. Do not proceed with names pointing at a different machine.

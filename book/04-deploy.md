@@ -13,7 +13,11 @@ cp examples/hosting.example.json hosting.json
 nano hosting.json
 ```
 
-`email` is the certificate account contact, `dashboard` is the management hostname, and `sites` is the ordered list of website hostnames. Use lowercase names without `https://`, slashes, or wildcards. The generator rejects duplicates, including a dashboard name reused as a website.
+`email` is the certificate account contact and `sites` is the ordered list of
+website hostnames. The `dashboard` field remains for compatibility; it creates
+no public route and needs no new DNS record. Use lowercase names without
+`https://`, slashes, or wildcards. The generator rejects duplicates, including
+a dashboard name reused as a website. Dashboard access uses an SSH tunnel.
 
 ```bash
 python3 scripts/configure.py --config hosting.json --output runtime
@@ -37,7 +41,11 @@ Press Ctrl-C to stop following logs; this does not stop the containers.
 
 Running the generator again replaces the generated Compose model but **does not overwrite existing welcome pages or certificate data**. It tightens permissions on the certificate directory and file. If Docker-owned files prevent regeneration, use sudo for the generator and continue editing as an administrator.
 
-Manual edits to Compose, including the optional authentication configuration in Chapter 5, must be reapplied after regeneration. Keep a copy before experimenting. Removed hostname directories remain on disk; review them before deleting anything.
+Manual edits to the generated Compose file must be reapplied after regeneration.
+The optional authentication in Chapter 5 uses a separate overlay: keep that file,
+its local credential file, and its `-f` argument when deploying a regenerated
+base. Keep a copy before experimenting. Removed hostname directories remain on
+disk; review them before deleting anything.
 
 ## Customize a page
 
@@ -55,8 +63,25 @@ Run the verifier from the repository directory:
 python3 scripts/verify.py --config hosting.json
 ```
 
-It checks DNS resolution, the HTTP redirect, trusted TLS, and the expected hostname in each website's response. Its expected dashboard response is 200 because this lab starts without authentication. If you later enable authentication, a dashboard 401 is intentional. Keep the hostname in your page when using this verifier.
+It checks DNS resolution, the HTTP redirect, trusted TLS, and the expected
+hostname in each website's response. It also checks that dashboard/API paths
+return 404 on the first configured website's HTTPS origin. Keep the hostname
+in your page when using this verifier. No public certificate is issued or renewed
+for the dashboard hostname by the private route.
 
 Also run the verifier from your laptop, using a local copy of the configuration, to test the public route rather than only the server's network view.
 
-**Checkpoint:** each website returns its own hostname; HTTP redirects to HTTPS; the dashboard loads. Save these results as evidence, never certificate private keys.
+Use the [Chapter 5 tunnel](05-https-dashboard.md) to inspect the dashboard.
+If you enabled its optional authentication overlay, a tunneled response of 401
+without credentials is intentional; valid credentials should load the dashboard.
+
+While the base-model tunnel is running, add
+`--admin-origin http://127.0.0.1:18082` to the verifier to check private access.
+For an existing deployment whose former dashboard name still has a valid
+certificate, add `--dashboard-origin https://FORMER_DASHBOARD_HOST` to check its
+old public route too. These requests test selected origins and paths; the
+configuration checks also inspect which entry points own the dashboard route.
+
+**Checkpoint:** each website returns its own hostname; HTTP redirects to HTTPS;
+public management paths are closed; the tunneled dashboard loads. Save these
+results as evidence, never certificate private keys.

@@ -2,7 +2,7 @@
 # Activate through compose.file-config.yaml; do not use alongside the CLI options.
 api:
   dashboard: true
-  insecure: false  # No separately exposed insecure dashboard listener.
+  insecure: false  # Use the explicit router on the private entry point below.
 
 providers:
   docker:
@@ -22,6 +22,8 @@ entryPoints:
     http:
       tls:
         certResolver: letsencrypt  # Default for routers using this entry point.
+  traefik:
+    address: ':8080'  # Published only on host 127.0.0.1:8082; use an SSH tunnel.
 
 certificatesResolvers:
   letsencrypt:

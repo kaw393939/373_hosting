@@ -15,6 +15,7 @@
         "--providers.docker.network=hosting-web",
         "--entrypoints.web.address=:80",
         "--entrypoints.websecure.address=:443",
+        "--entrypoints.traefik.address=:8080",
         "--entrypoints.web.http.redirections.entrypoint.to=websecure",
         "--entrypoints.web.http.redirections.entrypoint.scheme=https",
         "--entrypoints.websecure.http.tls.certresolver=letsencrypt",
@@ -27,7 +28,8 @@
       ],
       "ports": [
         "80:80",
-        "443:443"
+        "443:443",
+        "127.0.0.1:8082:8080"
       ],
       "volumes": [
         "/var/run/docker.sock:/var/run/docker.sock:ro",
@@ -56,8 +58,8 @@
       },
       "labels": {
         "traefik.enable": "true",
-        "traefik.http.routers.dashboard.rule": "Host(`traefik.example.com`)",
-        "traefik.http.routers.dashboard.entrypoints": "websecure",
+        "traefik.http.routers.dashboard.rule": "PathPrefix(`/api`) || PathPrefix(`/dashboard`)",
+        "traefik.http.routers.dashboard.entrypoints": "traefik",
         "traefik.http.routers.dashboard.service": "api@internal"
       }
     },

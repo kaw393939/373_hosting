@@ -44,6 +44,7 @@ def generate(config, output):
             '--providers.docker=true', '--providers.docker.exposedbydefault=false',
             '--providers.docker.network=hosting-web',
             '--entrypoints.web.address=:80', '--entrypoints.websecure.address=:443',
+            '--entrypoints.traefik.address=:8080',
             '--entrypoints.web.http.redirections.entrypoint.to=websecure',
             '--entrypoints.web.http.redirections.entrypoint.scheme=https',
             '--entrypoints.websecure.http.tls.certresolver=letsencrypt',
@@ -51,14 +52,14 @@ def generate(config, output):
             '--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json',
             '--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web',
             '--ping=true', '--log.level=INFO', '--accesslog=true'],
-        'ports': ['80:80', '443:443'],
+        'ports': ['80:80', '443:443', '127.0.0.1:8082:8080'],
         'volumes': ['/var/run/docker.sock:/var/run/docker.sock:ro', './letsencrypt:/letsencrypt'],
         'networks': ['web'], 'logging': logging,
         'healthcheck': {'test': ['CMD', 'traefik', 'healthcheck', '--ping'],
                         'interval': '10s', 'timeout': '5s', 'retries': 3},
         'labels': {'traefik.enable': 'true',
-                   'traefik.http.routers.dashboard.rule': f"Host(`{config['dashboard']}`)",
-                   'traefik.http.routers.dashboard.entrypoints': 'websecure',
+                   'traefik.http.routers.dashboard.rule': 'PathPrefix(`/api`) || PathPrefix(`/dashboard`)',
+                   'traefik.http.routers.dashboard.entrypoints': 'traefik',
                    'traefik.http.routers.dashboard.service': 'api@internal'}}}
     for index, domain in enumerate(config['sites'], 1):
         name = f'site-{index}'
@@ -101,7 +102,7 @@ def main():
     except (ValueError, OSError) as error:
         parser.exit(1, f'Configuration error: {error}\n')
     print(f'Created {args.output}/compose.yaml. Existing pages and certificates were preserved.')
-    print('Dashboard authentication is disabled for this lab.')
+    print('Dashboard: server loopback http://127.0.0.1:8082/dashboard/; access it through an SSH tunnel.')
 
 
 if __name__ == '__main__':

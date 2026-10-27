@@ -20,6 +20,8 @@ jobs:
       - run: docker compose -f examples/full-stack/compose.yaml -f examples/full-stack/compose.file-config.yaml config --quiet
       - run: docker compose -f examples/full-stack/compose.yaml -f examples/full-stack/compose.auth.yaml config --quiet
       - run: docker compose -f examples/full-stack/compose.yaml -f examples/full-stack/compose.file-config.yaml -f examples/full-stack/compose.auth.yaml config --quiet
+      - name: Exercise public denial and private access against real isolated Traefik
+        run: python3 scripts/smoke-dashboard.py
   integration-contract:
     runs-on: ubuntu-24.04
     steps:

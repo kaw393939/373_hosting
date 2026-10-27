@@ -52,7 +52,7 @@ leave a router visible while its backend cannot be reached.
 |---|---|
 | `image` | Selects the pinned Traefik release |
 | `restart: unless-stopped` | Restarts after failures/daemon startup unless deliberately stopped |
-| `ports` | Publishes only host TCP 80 and 443 |
+| `ports` | Publishes public TCP 80/443 and management port 8082 on host loopback only |
 | Docker socket mount | Lets Traefik discover container labels and addresses |
 | Certificate directory mount | Keeps account and certificate state across recreation |
 | `healthcheck` | Calls Traefik's internal ping command to report readiness |
@@ -71,10 +71,11 @@ replaces the CLI list with one `--configFile` argument and mounts that file.
 
 | Setting group | Responsibility |
 |---|---|
-| `api` | Enables dashboard inspection; disables a separate insecure listener |
+| `api` | Enables dashboard inspection; `insecure=false` disables the automatic insecure API route, not authentication |
 | `providers.docker` | Discovers explicitly enabled containers on the selected network |
 | `entryPoints.web` | Listens on 80 and redirects normal HTTP traffic to HTTPS |
 | `entryPoints.websecure` | Listens on 443 and applies the default TLS resolver |
+| `entryPoints.traefik` | Listens on container port 8080 for the explicit private dashboard route and ping |
 | `certificatesResolvers.letsencrypt.acme` | Sets contact email, persisted storage, and HTTP-01 validation |
 | `ping`, `log`, `accessLog` | Provides health and operational visibility |
 
@@ -96,7 +97,10 @@ Inspect `site-1` in the Compose file:
 There is one declared backend service for each website router; Traefik can infer
 that association. Router/service names must stay unique as you add applications.
 The dashboard router instead explicitly selects `api@internal`, Traefik's own
-inspection service. It does not need an Apache container.
+inspection service. Its rule matches `/api` and `/dashboard` only on the
+`traefik` entry point. The host mapping `127.0.0.1:8082:8080` makes this reachable
+through the [SSH tunnel](05-https-dashboard.md), while the public `websecure`
+entry point has no dashboard route. It does not need an Apache container.
 
 ## Apache and the HTML files
 
@@ -138,7 +142,8 @@ Without starting containers, find the setting responsible for each behavior:
 2. Editing one welcome page changes only one website.
 3. An unlabelled container is not published automatically.
 4. Restarting Traefik preserves certificates.
-5. Adding the authentication overlay makes the dashboard return 401 without credentials.
+5. The dashboard is reachable through SSH but its public paths return 404.
+6. Adding the authentication overlay makes the tunneled dashboard return 401 without credentials.
 
 Then validate both static configuration methods with `docker compose config` and
 compare their merged models. They should have the same five Apache services and
