@@ -2,7 +2,8 @@
 
 ## HOST-001 · Keep the Traefik dashboard private
 
-**Status:** staged for review; not yet applied to the live VPS.
+**Status:** applied and verified October 26, 2026 (EDT; checks completed October 27 at 00:04 UTC).
+**PR:** [#4](https://github.com/kaw393939/373_hosting/pull/4).
 **Issue:** [#3](https://github.com/kaw393939/373_hosting/issues/3).
 **Change record:** [October 26, 2026](book/changes/2026-10-26-dashboard.md).
 
@@ -28,10 +29,10 @@ sandbox. An optional BasicAuth overlay adds a check inside the tunnel.
 
 | Acceptance check | Expected result | Evidence |
 |---|---|---|
-| Positive: SSH tunnel, dashboard and API | Dashboard loads; API returns usable routing data | Live result pending |
-| Negative: dashboard/API paths on selected public HTTPS origins, without credentials | 404; no management data | Live result pending |
-| Regression: ordinary public websites | Redirects, trusted HTTPS, and expected content still work | Live result pending |
-| Configuration preservation | Only the required proxy access settings change | Review and migration checks pending |
+| Positive: SSH tunnel, dashboard and API | Dashboard loads; API returns usable routing data | Live HTTP and browser checks passed; see dated record |
+| Negative: dashboard/API paths on selected public HTTPS origins, without credentials | 404; no management data | All 13 selected paths returned 404 |
+| Regression: ordinary public websites | Redirects, trusted HTTPS, and expected content still work | Eight site baselines and five health/release results unchanged |
+| Configuration preservation | Only the required proxy access settings change | Exact planned model installed; other 14 container IDs/images and ACME bytes unchanged |
 
 Positive/negative describe the case being checked. Unit tests check generated
 configuration and verifier behavior; a container integration check exercises

@@ -4,8 +4,9 @@
 [Issue #3](https://github.com/kaw393939/373_hosting/issues/3) ·
 [Validation](../../VALIDATION.md)
 
-**Status on October 26, 2026:** the repository change is staged for review.
-The live migration and final observations are pending.
+**Status on October 26, 2026 (EDT):** applied and verified on the live VPS.
+Final checks completed October 27 at 00:04 UTC.
+**Reviewed change:** [PR #4](https://github.com/kaw393939/373_hosting/pull/4).
 
 ## Try: observe the failure
 
@@ -57,29 +58,45 @@ results will be recorded in [VALIDATION.md](../../VALIDATION.md). A model test
 can establish that the loopback mapping is generated; it cannot establish that
 a particular VPS is running it.
 
-Live application has not occurred. The first SSH login succeeded, but that user
-could not access Docker and noninteractive sudo required a password. The owner
-subsequently established a privileged session. The distinction matters: SSH
-connectivity alone did not grant authority to recreate the proxy. The historical
-public exposure remains unresolved until the change is applied and verified.
+The owner authorized the operational correction and established administrator
+authentication. An ordinary SSH login alone had not granted Docker access.
+A protected on-host archive saved the existing Compose file and certificate
+state. The deployed helper was byte-identical to reviewed
+[commit e45c6f9](https://github.com/kaw393939/373_hosting/commit/e45c6f990bb30ec465e6f9c6b08eb1d1586dd011),
+after [CI passed](https://github.com/kaw393939/373_hosting/actions/runs/40423722648).
+The migration required the reviewed original Compose SHA-256 and recreated only
+Traefik, without pulling or building an image.
 
-After application, check a positive case through the SSH tunnel and negative
-cases against the former public dashboard origin while its certificate is valid.
-New deployments use a website origin with trusted TLS; the private route does
-not request or renew a dashboard hostname certificate. Selected requests
-complement configuration checks and do not prove every possible hostname.
-Check ordinary site redirects, TLS, and content as regressions.
-Positive/negative describe expected outcomes;
-unit, integration, and live/browser checks describe where the check runs.
+| Case | Actual result after readiness |
+|---|---|
+| Negative: 13 management/debug paths on former public dashboard origin | All 404 over trusted HTTPS; 11 had returned 200 before |
+| Positive: SSH tunnel to dashboard and version API | Both 200; version 3.7.13 |
+| Structural runtime check | `dashboard@docker` used only `traefik`; exact loopback mapping; external port connection unavailable |
+| Website regression | Eight roots retained content hashes, redirects and trusted HTTPS; five health/release results unchanged |
+| Preservation | Only proxy recreated; other 14 container IDs/images unchanged; proxy image and ACME bytes unchanged |
+| AI browser observation | 14 enabled routers, 16 enabled services; no warnings/errors; public dashboard showed 404; calculator 6 × 7 returned matching browser/API 42 |
 
-The administrator's browser observation is still pending: open the tunneled
-dashboard, identify an actual router and service, and confirm an ordinary
-public website still looks and behaves as expected. Record what was observed;
-do not substitute an invented learner response or screenshot.
+A probe made while recreation was still running returned temporary private
+404s. Wait for the migration's readiness result before interpreting the final
+check; the same probe passed afterward. No recovery fallback was needed.
+Locally, an interrupted apply was tested to attempt a disabled-dashboard
+fallback; SIGKILL, power loss and full host recovery were not tested.
+
+The existing dashboard certificate was still valid for the public negative
+check. New deployments use a website origin with trusted TLS; the private
+route does not request or renew a dashboard hostname certificate. Selected
+requests complement configuration checks and do not prove every hostname or
+isolate trusted host processes and peer containers.
+
+These browser/terminal findings are AI/operator observations, not invented
+student responses or a claimed human review. Raw private evidence and
+screenshots remain outside Git. Full commands, check scope and results are in
+[VALIDATION.md](../../VALIDATION.md).
 
 ## Keep: close the loop with evidence
 
-Retain the change and close the issue only after the live results satisfy
-HOST-001. Link the reviewed change, actual check results, and administrator
-observation back to the specification and issue. Until then, this record is a
-prepared correction with an explicit deployment gap.
+The live results satisfy HOST-001. The requirement, implementation, tests,
+[issue #3](https://github.com/kaw393939/373_hosting/issues/3), and
+[PR #4](https://github.com/kaw393939/373_hosting/pull/4) form one reviewable change.
+This is an instructor's separately authorized operational example. The IS373
+student documentation exercise remains read-only on the existing server.

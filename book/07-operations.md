@@ -72,7 +72,8 @@ sudo python3 scripts/restrict-dashboard.py --apply --compose /opt/webserver/comp
 The tool requires an unchanged source file, creates a private Compose backup,
 validates the candidate, and recreates only the proxy. Its recovery path keeps
 management access closed. Record the actual result and rerun the public/private
-checks; the current classroom migration is still pending.
+checks. The [classroom result](changes/2026-10-26-dashboard.md) records the
+applied change and its limits; it does not establish the state of your server.
 
 ## Backup exercise
 

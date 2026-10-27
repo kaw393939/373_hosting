@@ -48,7 +48,7 @@ This boundary restricts remote access through the host's published port. Trusted
 processes on the VPS and containers sharing Traefik's network remain within the
 administrative trust boundary; loopback publishing is not a complete sandbox.
 The [HOST-001 worked change](changes/2026-10-26-dashboard.md) records the earlier
-public exposure and the pending live migration.
+public exposure, the applied correction and the actual checks.
 
 With the base-model tunnel running, check both sides from your own computer:
 

@@ -40,13 +40,40 @@ The isolated check initially failed readiness because Traefik does not accept
 a `.json` extension for its file provider. The fixture now uses `.yaml`
 (JSON notation is valid YAML); the assertion was retained and rerun.
 
-Live application is pending. The first SSH session could read the deployment,
-but Docker access was denied and noninteractive sudo required a password. The
-owner subsequently established a privileged session. A successful SSH login
-alone does not establish permission to recreate the proxy. Until the migration
-is applied and its results are recorded, the observed public exposure remains
-unresolved. Offline checks and an isolated container check cannot establish the
-live server's final state.
+Live application completed October 26, 2026 EDT; final server checks were at
+00:04 UTC on October 27. The owner authorized the change and established the
+needed administrator authentication. The first ordinary SSH session alone did
+not grant Docker administration.
+
+- Reviewed source: [e45c6f9](https://github.com/kaw393939/373_hosting/commit/e45c6f990bb30ec465e6f9c6b08eb1d1586dd011),
+  [passing CI](https://github.com/kaw393939/373_hosting/actions/runs/40423722648),
+  [PR #4](https://github.com/kaw393939/373_hosting/pull/4).
+- Before: 11 of 13 selected public paths returned 200; the two debug paths
+  already returned 404. After readiness: all 13 returned 404 over trusted HTTPS.
+- Positive: an SSH-key tunnel returned 200 for dashboard and version API;
+  version 3.7.13. The live dashboard router used only `traefik`, with no TLS
+  on that private entry point; host binding was exactly `127.0.0.1:8082`.
+  An external TCP connection to that host port did not succeed.
+- Eight website roots retained identical content hashes, trusted TLS and
+  same-host HTTP-to-HTTPS redirects. Five health/release responses matched
+  their pre-change selected fields exactly.
+- Only Traefik was recreated. The other 14 container IDs and images were
+  unchanged; all 15 containers were running, and Traefik was healthy with its
+  original image ID. The installed Compose model equaled the planned model;
+  ACME file bytes were unchanged. Protected on-host backups were retained.
+- AI browser review: the tunneled dashboard rendered 14 enabled routers and
+  16 enabled services, without warnings/errors. Its routing table showed
+  `dashboard@docker` → `api@internal` on `traefik`, and calculator routing on
+  `websecure`. The public dashboard showed `404 page not found`. The calculator
+  returned 42 in both browser and API for 6 × 7, with “Results match.”
+
+A tunnel probe started while recreation was still running returned transient
+404s. It was not counted as success: after the migration's readiness check
+completed, the same probe passed. No disabled fallback was needed. Signal and
+failure recovery were tested locally, not deliberately triggered on production.
+The observations above are AI/operator evidence, not a student's explanation
+or a claimed human browser review. Private raw evidence and screenshots remain
+outside Git; the sanitized dated record is the published teaching artifact.
 
 Public request checks use trusted TLS on a configured website by default. An
 existing dashboard origin can also be checked while its old certificate remains
