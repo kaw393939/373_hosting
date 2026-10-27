@@ -98,6 +98,12 @@ ignored by Git.
 
 Run `python3 -m unittest discover -s tests -v` and `bash -n scripts/install-docker.sh`. CI also validates the generated Compose model. These checks do not provision a cloud server or request public certificates. See [VALIDATION.md](VALIDATION.md) for exactly what was exercised.
 
+The [HOST-002 maintenance record](book/changes/2026-10-26-maintenance.md) tracks
+separately authorized recovery checks, package updates, and a reboot, with each
+result recorded separately. Recovery, package installation, reboot, and host/HTTP
+checks passed; AI browser review remains pending. It adds no required student
+step.
+
 This is a single-server teaching deployment, not high availability. It does not configure GoDaddy automatically, deploy a wildcard certificate, or provide application databases. The scripts do not upgrade Ubuntu or reboot the VPS.
 
 ## Primary references

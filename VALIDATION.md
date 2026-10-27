@@ -98,3 +98,68 @@ The subsequent user-authorized public deployment is recorded in
 [the September 29 calculator deployment evidence](book/deployments/2026-09-29-calculator.md).
 It includes the certificate-inheritance correction, trusted HTTPS release
 verification, and seven browser checks against the live endpoint.
+
+## HOST-002: recovery before maintenance
+
+[HOST-002](SPEC.md#host-002--controlled-host-maintenance), [issue #5](https://github.com/kaw393939/373_hosting/issues/5)
+and the [dated maintenance record](book/changes/2026-10-26-maintenance.md) track
+this separately authorized operational cycle. Its pre-maintenance checks ran
+October 26 EDT (October 27 UTC).
+
+- The existing off-host chat backup passed authenticated decryption, strict
+  archive/manifest checks, actual isolated PostgreSQL restoration and exact-image
+  read-only ORM checks. [Chat PR #43](https://github.com/kaw393939/is373-ai-chat/pull/43)
+  records the result; its independent key-custody/alert criteria remain open.
+- The final fresh encrypted snapshot, created at 01:00:37.692 UTC, was copied
+  off-host and verified at 01:01:21 UTC: ciphertext identity, authenticated age
+  decryption, archive members and all 232 regular-file manifest hashes passed.
+  Protected configuration was not extracted on the recovery computer.
+- All three fresh PostgreSQL dumps restored into isolated test databases with
+  schema 0003, fourteen expected tables and valid constraints. The exact running
+  v2.0.0 image read every mapped row from each restored database; its counts
+  matched those restored snapshots. Database phase: 2.906 seconds; snapshot age
+  at database checks: 55.961 seconds. Both newly created containers were removed.
+- Separate online SQLite backup/restoration passed integrity and foreign-key
+  checks. All fourteen restored tables matched the selected snapshot's rows.
+  A synthetic committed-WAL case verified the same online-backup mechanism.
+- The new preflight recorded eight trusted-HTTPS site/content/redirect baselines
+  and five health/release responses. Narrow effective SSH/UFW checks passed.
+  No removed containerd configuration keys were found. APT metadata refreshed;
+  simulation proposed 22 upgrades, no additions, removals or held packages.
+
+These are bounded data/application-read rehearsals, not a full host rebuild,
+source-live-row comparison, authentication/provider/mail restoration or recovery
+of later writes. Private scripts, archives, raw inventories and database values
+stay outside Git. The first archive review found a missing release-selection
+file; the corrected final archive was regenerated and verified before maintenance.
+The version-pinned 22-package installation ran from 01:04:12.687 to
+01:08:05.223 UTC, exited 0, and passed `dpkg --audit`. It added or removed no
+packages. Docker Engine 29.9.2, containerd 2.4.2, Compose 5.6.1 and Buildx 0.38.1
+were verified. Local conffiles were preserved; selected deployment/ACME hashes
+were unchanged.
+
+Reboot was issued at 01:09:34 UTC. At 01:11:55.705 UTC, actual `uname` reported
+expected kernel 6.8.0-147, the boot ID had changed, the reboot marker was gone,
+required services/timers were active and no units had failed. All fifteen
+container IDs/images, health, ports and restart policies matched preflight.
+Eight site/content/redirect/TLS and five health/release baselines matched after
+both package application and reboot. The thirteen public denials and two
+SSH-tunnel successes passed again. External TCP checks could not reach the
+three loopback management/app/updater ports.
+
+AI browser review found matching browser/API calculator result 42 for 6 × 7;
+the tunneled Traefik dashboard showed fourteen enabled routers and sixteen
+services, with zero warnings/errors. These are operator observations, not
+human acceptance or learner responses.
+
+The external observer recorded 1,446 HTTPS samples across three health
+endpoints. Sampled failure windows were 55.025–103.246 seconds during package
+restart and 79.802–122.212 seconds around reboot. Transport failures and 404s
+preceded healthy backends. These are approximate endpoint observations, not
+full-traffic downtime or an availability guarantee. No healthcheck or gate
+was weakened to obtain a pass.
+
+The chat documentation PR's book check passed but its application vulnerability
+gate failed for an existing locked certifi dependency. It remains unmerged;
+[chat #44](https://github.com/kaw393939/is373-ai-chat/issues/44) tracks remediation.
+Host maintenance preserved application images and does not patch their contents.
