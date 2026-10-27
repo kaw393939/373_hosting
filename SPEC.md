@@ -57,3 +57,15 @@ Compose file. Recovery must keep public management access closed. Retain the
 change only after repository and live HTTP/browser checks; do not close the
 issue on repository checks alone. Attribute AI operator observations separately
 from any later human review.
+
+## HOST-002 · Controlled host maintenance
+
+**Status:** planned; no package upgrades or reboot performed in HOST-001.
+**Issue:** [#5](https://github.com/kaw393939/373_hosting/issues/5).
+
+The October 26 audit observed a pending kernel reboot and cached package
+updates. Refresh and review candidates, verify recovery prerequisites, then
+apply selected updates in a controlled interruption window. Acceptance requires
+the expected running kernel, no failed required services or unintended public
+ports, preserved public release/content baselines, and HOST-001 still passing.
+The issue records the staged checks; live results remain pending.
